@@ -55,11 +55,11 @@ CREATE TABLE transfer(
 
 CREATE TABLE user_friends(
 	user_id_request int NOT NULL,
-	user_id_recieve int NOT NULL,
+	user_id_receive int NOT NULL,
 	approved boolean NOT NULL,
 	CONSTRAINT PK_userA_userB PRIMARY KEY (user_id_request,user_id_recieve),
 	CONSTRAINT FK_user_request FOREIGN KEY(user_id_request) references tenmo_user(user_id),
-	CONSTRAINT FK_user_recieve FOREIGN KEY(user_id_recieve) references tenmo_user(user_id)
+	CONSTRAINT FK_user_receive FOREIGN KEY(user_id_receive) references tenmo_user(user_id)
 );
 
 
