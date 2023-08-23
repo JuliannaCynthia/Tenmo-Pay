@@ -68,16 +68,39 @@ public class JdbcTransferDaoTest extends BaseDaoTests{
     }
 
     @Test
-    public void viewTransferFromHistory() {
+    public void viewTransferFromHistory_returns_correct_number_of_transfers() {
+        Transfer newTransfer = new Transfer();
+        newTransfer.setTransferFromUserId(1001);
+        newTransfer.setTransferToUserId(1002);
+        newTransfer.setTransferAmount(new BigDecimal("100.00"));
+
+        sut.createTransfer(newTransfer);
+        sut.createTransfer(newTransfer);
+
+
         List<Transfer> transferHistory = sut.viewTransferFromHistory(1002, null);
+        assertEquals("Expected one transfer returned", 1, transferHistory.size());
     }
 
     @Test
-    public void viewTransferToHistory() {
+    public void viewTransferToHistory_returns_correct_number_of_transfers() {
+        Transfer newTransfer = new Transfer();
+        newTransfer.setTransferFromUserId(1001);
+        newTransfer.setTransferToUserId(1002);
+        newTransfer.setTransferAmount(new BigDecimal("100.00"));
+
+        sut.createTransfer(newTransfer);
+        sut.createTransfer(newTransfer);
+
+        List<Transfer> transferHistory = sut.viewTransferToHistory(1002, null);
+        assertEquals("Expected three transfers returned", 3, transferHistory.size());
+
     }
 
     @Test
     public void viewPendingTransfers() {
+        List<Transfer> pendingTransfers = sut.viewPendingTransfers(1001);
+        assertEquals("Expected one pending transfer",1,pendingTransfers.size());
     }
 
     private void assertTransfersMatch(String message, Transfer expected, Transfer actual){
