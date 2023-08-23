@@ -10,16 +10,14 @@ public interface TransferDao {
     Transfer createTransfer(Transfer transfer);
 
     //PUT /transfer/request/
-    Transfer approveTransfer(Transfer transfer);
+    Integer approveTransfer(Transfer transfer);
 
     //GET /transfer/history
-    List<Transfer> viewTransferHistory();
+    List<Transfer> viewTransferFromHistory(int userId, Integer friendUserId);
+    List<Transfer> viewTransferToHistory(int userId, Integer friendUserId);
 
     //GET /transfer/history/id
     Transfer getTransferById(Integer transferId);
-
-    //GET /transfer/history/friendUserName
-    List<Transfer> viewTransfersByFriendUserName(String friendUsername);
 
     //GET transfer/pending
     List<Transfer> viewPendingTransfers();
