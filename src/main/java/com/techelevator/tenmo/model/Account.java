@@ -9,7 +9,7 @@ public class Account {
     private int accountId;
     @Min(value = 1001, message = "Account cannot be registered with an invalid id.")
     private int userId;
-    @NotBlank
+
     private BigDecimal balance = new BigDecimal("1000");
 
     public Account(){}

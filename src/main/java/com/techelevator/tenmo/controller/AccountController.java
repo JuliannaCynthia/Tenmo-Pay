@@ -7,6 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.security.Principal;
 import java.util.List;
 
@@ -33,7 +34,7 @@ public class AccountController {
     }
 
     @RequestMapping(path = "/account", method = RequestMethod.PUT)
-    public Account update(Account account){
+    public Account update(@Valid @RequestBody Account account){
         return jdbcAccount.updateAccount(account);
     }
 
