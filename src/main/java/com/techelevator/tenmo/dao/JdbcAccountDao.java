@@ -9,6 +9,7 @@ import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Component;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,13 +26,12 @@ public class JdbcAccountDao implements AccountDao{
     public List<Account> getAccountsByUser(String username) {
         List<Account> accounts = null;
         String sqlUser = "select user_id from tenmo_user where username = ?;";
-        String sql = "select tenmo_user.username, account.balance from account join tenmo_user on account.user_id = tenmo_user.user_id where tenmo_user.user_id = ?;";
+        String sql = "select * from account where user_id = ?";
         try{
             int userId = jdbcTemplate.queryForObject(sqlUser,int.class,username);
             SqlRowSet results = jdbcTemplate.queryForRowSet(sql,userId);
             accounts = new ArrayList<>();
             while(results.next()){
-
                 accounts.add(mapRowToAccount(results));
             }
         }catch(CannotGetJdbcConnectionException | DataIntegrityViolationException e){
@@ -43,12 +43,16 @@ public class JdbcAccountDao implements AccountDao{
     @Override
     public Account getAccountById(int id) {
         String sql = "select * from account where account_id = ?;";
-
+        Account account = null;
         try{
-            return mapRowToAccount(jdbcTemplate.queryForRowSet(sql,id));
+            SqlRowSet rowSet = jdbcTemplate.queryForRowSet(sql,id);
+            if(rowSet.next()){
+                account= mapRowToAccount(rowSet);
+            }
         }catch (CannotGetJdbcConnectionException | DataIntegrityViolationException e){
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
         }
+        return account;
     }
 
     @Override
@@ -58,7 +62,9 @@ public class JdbcAccountDao implements AccountDao{
         int accountId;
         try{
             int userId = jdbcTemplate.queryForObject(sqlUser,int.class,username);
-            accountId = jdbcTemplate.queryForObject(sqlInsert,int.class,userId,1000);
+            BigDecimal n = new BigDecimal("1000.00");
+            accountId =jdbcTemplate.queryForObject(sqlInsert,int.class,userId,n);
+
 
         }catch (CannotGetJdbcConnectionException | DataIntegrityViolationException e){
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
@@ -68,10 +74,11 @@ public class JdbcAccountDao implements AccountDao{
 
     @Override
     public Account updateAccount(Account account) {
-        String sql = "update account set user_id = ?, balance = ? where account_id = ?;";
+        String sql = "update account set account_id =?, user_id = ?, balance = ? where account_id = ?;";
         int rowsAffected = 0;
         try{
-            rowsAffected = jdbcTemplate.update(sql,account.getUserId(),account.getBalance(),account.getAccountId());
+            rowsAffected = jdbcTemplate.update(sql,account.getAccountId(),account.getUserId(),account.getBalance(),account.getAccountId());
+            System.out.println(rowsAffected);
             if(rowsAffected!=1){
                 throw new ResponseStatusException(HttpStatus.EXPECTATION_FAILED);
             }
@@ -94,9 +101,11 @@ public class JdbcAccountDao implements AccountDao{
 
     public Account mapRowToAccount(SqlRowSet rowSet){
         Account account = new Account();
-        account.setAccountId(rowSet.getInt("account_id"));
-        account.setBalance(rowSet.getBigDecimal("balance"));
         account.setUserId(rowSet.getInt("user_id"));
+        account.setAccountId(rowSet.getInt("account_id"));
+        BigDecimal balance = rowSet.getBigDecimal("balance");
+        account.setBalance(balance);
+
         return account;
     }
 }
