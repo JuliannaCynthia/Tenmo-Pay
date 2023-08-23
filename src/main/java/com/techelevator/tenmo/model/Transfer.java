@@ -1,23 +1,22 @@
 package com.techelevator.tenmo.model;
 
 import java.math.BigDecimal;
-import java.sql.Date;
 
 public class Transfer {
     private int transferId;
     private BigDecimal transferAmount;
     private int transferFromUserId;
     private int transferToUserId;
-    private Date dateCreated;
     private boolean isPending;
     private boolean isApproved;
 
-    public Transfer(int transferId, BigDecimal transferAmount, int transferFromUserId, int transferToUserId, Date date_created, boolean isPending, boolean isApproved) {
+    public Transfer(){}
+
+    public Transfer(int transferId, BigDecimal transferAmount, int transferFromUserId, int transferToUserId, boolean isPending, boolean isApproved) {
         this.transferId = transferId;
         this.transferAmount = transferAmount;
         this.transferFromUserId = transferFromUserId;
         this.transferToUserId = transferToUserId;
-        this.dateCreated = date_created;
         this.isPending = isPending;
         this.isApproved = isApproved;
     }
@@ -54,13 +53,6 @@ public class Transfer {
         this.transferToUserId = transferToUserId;
     }
 
-    public Date getDateCreated() {
-        return dateCreated;
-    }
-
-    public void setDateCreated(Date dateCreated) {
-        this.dateCreated = dateCreated;
-    }
 
     public boolean isPending() {
         return isPending;
