@@ -71,5 +71,6 @@ INSERT INTO account (user_id) VALUES (1001);
 INSERT INTO account (user_id) VALUES (1002);
 
 INSERT INTO transfer (user_transfer_to, user_transfer_from, transfer_amount, is_pending, is_approved)
-VALUES ('1001', '1002', 100, false, true);
+VALUES ('1001', '1002', 100, false, true),
+       ('1002', '1001', 100, true, false);
 COMMIT;

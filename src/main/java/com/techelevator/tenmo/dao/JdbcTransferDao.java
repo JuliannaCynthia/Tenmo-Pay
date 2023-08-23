@@ -58,12 +58,12 @@ public class JdbcTransferDao implements TransferDao{
 
     @Override
     public Integer respondToTransferRequest(Transfer transfer) {
-        Integer rowsAffected = 0;
+        int rowsAffected = 0;
         String sql = "UPDATE transfer SET is_approved = ?, is_pending = false " +
-                "WHERE transfer_id = ?;";
+                "WHERE transfer_id = ? ;";
 
         try {
-            rowsAffected = jdbcTemplate.update(sql, Integer.class, transfer.isApproved(), transfer.getTransferId());
+            rowsAffected = jdbcTemplate.update(sql, transfer.isApproved(), transfer.getTransferId());
         }  catch (DataAccessException e) {
             throw new DaoException(e.getMessage(), e);
         }

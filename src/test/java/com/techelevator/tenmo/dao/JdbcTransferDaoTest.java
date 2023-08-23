@@ -6,12 +6,15 @@ import org.junit.Test;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.junit.Assert.*;
 
 public class JdbcTransferDaoTest extends BaseDaoTests{
-    //VALUES ('1001', '1002', 100, false, true);
-    private final Transfer TEST_TRANSFER = new Transfer(3001, new BigDecimal(100), 1002, 1001, false, true);
+
+    private final Transfer TEST_TRANSFER1 = new Transfer(3001, new BigDecimal(100), 1002, 1001, false, true);
+    private final Transfer TEST_TRANSFER2 = new Transfer(3002, new BigDecimal(100), 1001, 1002, true, false);
     private TransferDao sut;
 
     @Before
@@ -22,7 +25,7 @@ public class JdbcTransferDaoTest extends BaseDaoTests{
 
     @Test
     public void getTransferById_returns_correct_transfer_id() {
-        int transferId = TEST_TRANSFER.getTransferId();
+        int transferId = TEST_TRANSFER1.getTransferId();
 
         Transfer testGetTransfer = sut.getTransferById(transferId);
 
@@ -38,18 +41,35 @@ public class JdbcTransferDaoTest extends BaseDaoTests{
         newTransfer.setTransferAmount(new BigDecimal("100.00"));
 
         Transfer createdTransfer = sut.createTransfer(newTransfer);
-        newTransfer.setTransferId(3002);
+        newTransfer.setTransferId(3003);
 
         assertNotNull("createTransfer unexpectedly returned null", createdTransfer);
         assertTransfersMatch("CreatedTransfer did not return correct transfer information", newTransfer, createdTransfer);
     }
 
     @Test
-    public void respondToTransferRequest() {
+    public void respondToTransferRequest_returns_correct_number_of_rows_updated() {
+        Transfer respondingTransfer = TEST_TRANSFER2;
+        respondingTransfer.setApproved(true);
+
+        int rowsAffected = sut.respondToTransferRequest(respondingTransfer);
+        assertEquals("Expected one row affected", 1, rowsAffected);
+    }
+
+    @Test
+    public void respondToTransferRequest_returns_with_correct_pending_and_approved_values() {
+        Transfer respondingTransfer = TEST_TRANSFER2;
+        respondingTransfer.setApproved(true);
+
+        sut.respondToTransferRequest(respondingTransfer);
+        Transfer updatedTransfer = sut.getTransferById(3002);
+        assertTrue("Expected is_approved to be true", updatedTransfer.isApproved());
+        assertFalse("Expected is_pending to be false", updatedTransfer.isPending());
     }
 
     @Test
     public void viewTransferFromHistory() {
+        List<Transfer> transferHistory = sut.viewTransferFromHistory(1002, null);
     }
 
     @Test
