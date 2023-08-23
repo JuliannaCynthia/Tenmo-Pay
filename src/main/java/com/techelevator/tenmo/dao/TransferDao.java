@@ -10,7 +10,7 @@ public interface TransferDao {
     Transfer createTransfer(Transfer transfer);
 
     //PUT /transfer/request/
-    Integer approveTransfer(Transfer transfer);
+    Integer respondToTransferRequest(Transfer transfer);
 
     //GET /transfer/history
     List<Transfer> viewTransferFromHistory(int userId, Integer friendUserId);
@@ -20,7 +20,7 @@ public interface TransferDao {
     Transfer getTransferById(Integer transferId);
 
     //GET transfer/pending
-    List<Transfer> viewPendingTransfers();
+    List<Transfer> viewPendingTransfers(Integer userId);
 
 
 

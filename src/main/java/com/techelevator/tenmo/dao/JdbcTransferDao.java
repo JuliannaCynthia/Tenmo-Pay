@@ -50,13 +50,13 @@ public class JdbcTransferDao implements TransferDao{
     }
 
     @Override
-    public Integer approveTransfer(Transfer transfer) {
+    public Integer respondToTransferRequest(Transfer transfer) {
         Integer rowsAffected = 0;
-        String sql = "UPDATE transfer SET is_approved = true, is_pending = false " +
+        String sql = "UPDATE transfer SET is_approved = ?, is_pending = false " +
                 "WHERE transfer_id = ?;";
 
         try {
-            rowsAffected = jdbcTemplate.update(sql, Integer.class, transfer.getTransferId());
+            rowsAffected = jdbcTemplate.update(sql, Integer.class, transfer.isApproved(), transfer.getTransferId());
         }  catch (DataAccessException e) {
             throw new DaoException(e.getMessage(), e);
         }
@@ -117,8 +117,21 @@ public class JdbcTransferDao implements TransferDao{
     }
 
     @Override
-    public List<Transfer> viewPendingTransfers() {
-        return null;
+    public List<Transfer> viewPendingTransfers(Integer userId) {
+        List<Transfer> transferList = new ArrayList<>();
+        String sql = SELECT_TRANSFER_BASE_SQL + "WHERE (user_transfer_from = ? " +
+                                                "OR user_transfer_to = ?) " +
+                                                "AND is_pending = true ;";
+
+        try {
+            SqlRowSet results = jdbcTemplate.queryForRowSet(sql, userId, userId);
+            while(results.next()){
+                transferList.add(mapRowSetToTransfer(results));
+            }
+        }catch (DataAccessException e){
+            throw new DaoException(e.getMessage(), e);
+        }
+        return transferList;
     }
 
     private Transfer mapRowSetToTransfer(SqlRowSet rowSet) {
