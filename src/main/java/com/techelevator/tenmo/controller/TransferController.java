@@ -24,13 +24,13 @@ public class TransferController {
     }
 
     @ResponseStatus(HttpStatus.CREATED)
-    @RequestMapping(value = "/request", method = RequestMethod.POST)
+    @RequestMapping(value = "", method = RequestMethod.POST)
     public Transfer createTransfer(@Valid @RequestBody Transfer transfer){
         return transferDao.createTransfer(transfer);
     }
 
 
-    @RequestMapping(value = "/request", method = RequestMethod.PUT)
+    @RequestMapping(value = "", method = RequestMethod.PUT)
     public Integer respondToTransferRequest(@Valid @RequestBody Transfer transfer) {
         return transferDao.respondToTransferRequest(transfer);
     }

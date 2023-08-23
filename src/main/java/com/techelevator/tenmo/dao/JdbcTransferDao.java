@@ -41,7 +41,13 @@ public class JdbcTransferDao implements TransferDao{
                 "VALUES (?, ?, ?, ?, ?) RETURNING transfer_id; ";
 
         try {
-            Integer newTransferId = jdbcTemplate.queryForObject(sql, Integer.class, transfer.getTransferToUserId(), transfer.getTransferFromUserId(), transfer.getTransferAmount(), transfer.isPending(), transfer.isApproved());
+            Integer newTransferId = jdbcTemplate.queryForObject(sql, Integer.class,
+                    transfer.getTransferToUserId(),
+                    transfer.getTransferFromUserId(),
+                    transfer.getTransferAmount(),
+                    transfer.isPending(),
+                    transfer.isApproved());
+
             createdTransfer = getTransferById(newTransferId);
 
         } catch (DataAccessException e) {

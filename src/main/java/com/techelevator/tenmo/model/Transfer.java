@@ -1,17 +1,24 @@
 package com.techelevator.tenmo.model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import javax.validation.constraints.NotBlank;
 import java.math.BigDecimal;
 
 public class Transfer {
+    @JsonProperty("transfer_id")
     private int transferId;
-    @NotBlank
+    @JsonProperty("transfer_amount")
     private BigDecimal transferAmount;
     @NotBlank
+    @JsonProperty("user_transfer_from")
     private int transferFromUserId;
     @NotBlank
+    @JsonProperty("user_transfer_to")
     private int transferToUserId;
+    @JsonProperty("is_pending")
     private boolean isPending = true;
+    @JsonProperty("is_approved")
     private boolean isApproved = false;
 
     public Transfer(){}
