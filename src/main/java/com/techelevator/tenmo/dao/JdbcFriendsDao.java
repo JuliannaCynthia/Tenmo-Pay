@@ -28,13 +28,13 @@ public class JdbcFriendsDao implements FriendsDao{
     }
 
     @Override
-    public List<FriendsDTO> getAcceptedFriends(Principal principal) {
+    public List<FriendsDTO> getAcceptedFriends(String userName) {
         List<FriendsDTO> friendsDTOS = null;
         String sqlUser = "select user_id from tenmo_user where username = ?";
         String sql = "select user_id_request, user_id_receive from user_friends where user_id_request = ? OR user_id_receive = ? AND approved = true;";
         try{
             friendsDTOS = new ArrayList<>();
-            int userId = jdbcTemplate.queryForObject(sqlUser,int.class,principal.getName(),principal.getName());
+            int userId = jdbcTemplate.queryForObject(sqlUser,int.class,userName,userName);
             SqlRowSet rowSet = jdbcTemplate.queryForRowSet(sql,userId);
             while(rowSet.next()){
                 friendsDTOS.add(mapToFriendsDto(rowSet));
@@ -46,15 +46,15 @@ public class JdbcFriendsDao implements FriendsDao{
     }
 
     @Override
-    public Friends addFriend(Principal principal, String foreignUserName) {
+    public Friends addFriend(String userName, String foreignUserName) {
         String userSql = "select user_id from tenmo_user where username = ?;";
         String sql = "insert into user_friends (user_id_request, user_id_receive, approved) values (?,?,?);";
         String sqlMake = "select * from user_friend where user_id_request = ? and user_id_receive = ?";
         Friends friends = null;
         try{
-            int userid = jdbcTemplate.queryForObject(userSql, int.class, principal.getName());
+            int userid = jdbcTemplate.queryForObject(userSql, int.class, userName);
             int secId = jdbcTemplate.queryForObject(userSql, int.class, foreignUserName);
-            jdbcTemplate.update(sql,principal.getName(),foreignUserName,false);
+            jdbcTemplate.update(sql,userName,foreignUserName,false);
             SqlRowSet rowSet = jdbcTemplate.queryForRowSet(sqlMake, userid,secId);
             if(rowSet.next()){
                 friends = mapRowToFriends(rowSet);
@@ -66,13 +66,13 @@ public class JdbcFriendsDao implements FriendsDao{
     }
 
     @Override
-    public List<FriendsDTO> pendingFriendships(Principal principal) {
+    public List<FriendsDTO> pendingFriendships(String userName) {
         List<FriendsDTO> friends = null;
         String sql = "select user_id from tenmo_user where username = ?;";
         String newSql ="select tenmo_user.username from tenmo_user join user_friends on tenmo_user.user_id = user_friends.user_id where user_id_receive = ?;";
         try{
             friends = new ArrayList<>();
-            int userid = jdbcTemplate.queryForObject(sql, int.class,principal.getName());
+            int userid = jdbcTemplate.queryForObject(sql, int.class,userName);
             SqlRowSet results = jdbcTemplate.queryForRowSet(newSql,userid);
             while(results.next()){
                 friends.add(mapToFriendsDto(results));
@@ -84,13 +84,13 @@ public class JdbcFriendsDao implements FriendsDao{
     }
 
     @Override
-    public void approveFriend(Principal principal, String foreignUserName) {
+    public void approveFriend(String userName, String foreignUserName) {
         String sql = "select user_id from tenmo_user where username = ?;";
         String bigSql = "update user_friends set user_id_request = ?, user_id_receive = ?, approved = ?;";
         String neSql = "select user_id_request from user_friends where user_id_request = ? OR user_id_request = ? AND user_id receive =? OR user_id_receive = ?;";
         try{
-            int userRequestId = jdbcTemplate.queryForObject(neSql, int.class, principal.getName(),foreignUserName,principal.getName(),foreignUserName);
-            int userId = jdbcTemplate.queryForObject(sql, int.class, principal.getName());
+            int userRequestId = jdbcTemplate.queryForObject(neSql, int.class, userName,foreignUserName,userName,foreignUserName);
+            int userId = jdbcTemplate.queryForObject(sql, int.class, userName);
             int secId = jdbcTemplate.queryForObject(sql, int.class,foreignUserName);
             if(userRequestId==userId){
                 throw new ResponseStatusException(HttpStatus.EXPECTATION_FAILED);
@@ -106,13 +106,13 @@ public class JdbcFriendsDao implements FriendsDao{
     }
 
     @Override
-    public void denyFriend(Principal principal, String foreignUserName) {
+    public void denyFriend(String userName, String foreignUserName) {
         String sql = "select user_id from tenmo_user where username = ?;";
         String bigSql = "update user_friends set user_id_request = ?, user_id_receive = ?, approved = ?;";
         String neSql = "select user_id_request from user_friends where user_id_request = ? OR user_id_request = ? AND user_id receive =? OR user_id_receive = ?;";
         try{
-            int userRequestId = jdbcTemplate.queryForObject(neSql, int.class, principal.getName(),foreignUserName,principal.getName(),foreignUserName);
-            int userId = jdbcTemplate.queryForObject(sql, int.class, principal.getName());
+            int userRequestId = jdbcTemplate.queryForObject(neSql, int.class, userName,foreignUserName,userName,foreignUserName);
+            int userId = jdbcTemplate.queryForObject(sql, int.class, userName);
             int secId = jdbcTemplate.queryForObject(sql, int.class,foreignUserName);
             if(userRequestId==userId){
                 throw new ResponseStatusException(HttpStatus.EXPECTATION_FAILED);
@@ -121,7 +121,7 @@ public class JdbcFriendsDao implements FriendsDao{
                 if(rowsAffected!=1){
                     throw new ResponseStatusException(HttpStatus.NOT_FOUND);
                 }
-                deleteFriend(principal,foreignUserName);
+                deleteFriend(userName,foreignUserName);
             }
         }catch(CannotGetJdbcConnectionException | DataIntegrityViolationException e){
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
@@ -130,13 +130,13 @@ public class JdbcFriendsDao implements FriendsDao{
 
 
     @Override
-    public void deleteFriend(Principal principal, String foreignUserName) {
+    public void deleteFriend(String userName, String foreignUserName) {
         String principalSql = "select user_id from tenmo_user where username = ?;";
         String sql = "delete from user_friends where user_id_request = ? OR user_id_request = ? AND user_id receive =? OR user_id_receive = ?;";
         try{
-            int userid = jdbcTemplate.queryForObject(principalSql, int.class,principal.getName());
+            int userid = jdbcTemplate.queryForObject(principalSql, int.class,userName);
             int secId = jdbcTemplate.queryForObject(principalSql, int.class,foreignUserName);
-            int rowsAffected= jdbcTemplate.update(sql,principal.getName(),foreignUserName,principal.getName(),foreignUserName);
+            int rowsAffected= jdbcTemplate.update(sql,userName,foreignUserName,userName,foreignUserName);
             if(rowsAffected!= 1){
                 throw new ResponseStatusException(HttpStatus.NOT_FOUND);
             }

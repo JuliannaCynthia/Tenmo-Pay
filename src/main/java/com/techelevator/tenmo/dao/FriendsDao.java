@@ -8,13 +8,13 @@ import java.util.List;
 
 public interface FriendsDao {
 
-    List<FriendsDTO> getAcceptedFriends(Principal principal);
+    List<FriendsDTO> getAcceptedFriends(String Username);
 
-    Friends addFriend(Principal principal, String foreignUserName);
-    List<FriendsDTO> pendingFriendships(Principal principal);
+    Friends addFriend(String userName, String foreignUserName);
+    List<FriendsDTO> pendingFriendships(String username);
 
-    void approveFriend(Principal principal, String foreignUserName);
-    void denyFriend(Principal principal, String foreignUserName);
-    void deleteFriend(Principal principal, String foreignUserName);
+    void approveFriend(String username, String foreignUserName);
+    void denyFriend(String username, String foreignUserName);
+    void deleteFriend(String username, String foreignUserName);
 
 }
