@@ -7,7 +7,7 @@ public class Friends {
     private String userNameRequest;
     @NotBlank
     private String userNameReceived;
-    @NotBlank
+
     private boolean approved;
 
     public Friends() {

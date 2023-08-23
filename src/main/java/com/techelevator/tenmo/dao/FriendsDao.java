@@ -10,7 +10,7 @@ public interface FriendsDao {
 
     List<FriendsDTO> getAcceptedFriends(String Username);
 
-    Friends addFriend(String userName, String foreignUserName);
+    int addFriend(String userName, String foreignUserName);
     List<FriendsDTO> pendingFriendships(String username);
 
     void approveFriend(String username, String foreignUserName);

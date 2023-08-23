@@ -3,6 +3,7 @@ package com.techelevator.tenmo.dao;
 import com.techelevator.tenmo.exceptions.DaoException;
 import com.techelevator.tenmo.model.Friends;
 import com.techelevator.tenmo.model.FriendsDTO;
+import jdk.jfr.StackTrace;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.jdbc.CannotGetJdbcConnectionException;
@@ -46,30 +47,34 @@ public class JdbcFriendsDao implements FriendsDao{
     }
 
     @Override
-    public Friends addFriend(String userName, String foreignUserName) {
+    public int addFriend(String userName, String foreignUserName) {
         String userSql = "select user_id from tenmo_user where username = ?;";
         String sql = "insert into user_friends (user_id_request, user_id_receive, approved) values (?,?,?);";
-        String sqlMake = "select * from user_friend where user_id_request = ? and user_id_receive = ?";
+        String sqlMake = "select * from user_friends where user_id_request = ? and user_id_receive = ?";
         Friends friends = null;
+        int tes = 0;
         try{
             int userid = jdbcTemplate.queryForObject(userSql, int.class, userName);
             int secId = jdbcTemplate.queryForObject(userSql, int.class, foreignUserName);
-            jdbcTemplate.update(sql,userName,foreignUserName,false);
-            SqlRowSet rowSet = jdbcTemplate.queryForRowSet(sqlMake, userid,secId);
-            if(rowSet.next()){
-                friends = mapRowToFriends(rowSet);
-            }
-        }catch(CannotGetJdbcConnectionException | DataIntegrityViolationException e){
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+           tes= jdbcTemplate.update(sql,userid,secId,false);
+//            SqlRowSet rowSet = jdbcTemplate.queryForRowSet(sqlMake, userid,secId);
+//            if(rowSet.next()){
+//                friends = mapRowToFriends(rowSet);
+//            }
+        }catch(CannotGetJdbcConnectionException e ){
+            throw new ResponseStatusException(HttpStatus.REQUESTED_RANGE_NOT_SATISFIABLE);
+        } catch(DataIntegrityViolationException e){
+
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "wawawawa");
         }
-        return friends;
+        return tes;
     }
 
     @Override
     public List<FriendsDTO> pendingFriendships(String userName) {
         List<FriendsDTO> friends = null;
         String sql = "select user_id from tenmo_user where username = ?;";
-        String newSql ="select tenmo_user.username from tenmo_user join user_friends on tenmo_user.user_id = user_friends.user_id where user_id_receive = ?;";
+        String newSql ="select username from tenmo_user join user_friends on tenmo_user.user_id = user_friends.user_id_receive where user_id_receive = ?;";
         try{
             friends = new ArrayList<>();
             int userid = jdbcTemplate.queryForObject(sql, int.class,userName);
@@ -111,9 +116,10 @@ public class JdbcFriendsDao implements FriendsDao{
         String bigSql = "update user_friends set user_id_request = ?, user_id_receive = ?, approved = ?;";
         String neSql = "select user_id_request from user_friends where user_id_request = ? OR user_id_request = ? AND user_id receive =? OR user_id_receive = ?;";
         try{
-            int userRequestId = jdbcTemplate.queryForObject(neSql, int.class, userName,foreignUserName,userName,foreignUserName);
+
             int userId = jdbcTemplate.queryForObject(sql, int.class, userName);
             int secId = jdbcTemplate.queryForObject(sql, int.class,foreignUserName);
+            int userRequestId = jdbcTemplate.queryForObject(neSql, int.class, userId,secId,userId,secId);
             if(userRequestId==userId){
                 throw new ResponseStatusException(HttpStatus.EXPECTATION_FAILED);
             }else{
@@ -148,14 +154,14 @@ public class JdbcFriendsDao implements FriendsDao{
 
     public FriendsDTO mapToFriendsDto(SqlRowSet rowSet){
         FriendsDTO friendsDTO = new FriendsDTO();
-        String secondUser;
-        try{
-            String principalSql = "select username from tenmo_user where user_id = ?;";
-            secondUser = jdbcTemplate.queryForObject(principalSql, String.class, rowSet.getInt("user_id_receive"));
-        }catch(CannotGetJdbcConnectionException | DataIntegrityViolationException e){
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
-        }
-        friendsDTO.setUserNameReceive(secondUser);
+//        String secondUser;
+//        try{
+//            String principalSql = "select username from tenmo_user where user_id = ?;";
+//            secondUser = jdbcTemplate.queryForObject(principalSql, String.class, rowSet.getInt("user_id_receive"));
+//        }catch(CannotGetJdbcConnectionException | DataIntegrityViolationException e){
+//            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+//        }
+        friendsDTO.setUserNameReceive(rowSet.getString("username"));
         return friendsDTO;
     }
 
@@ -168,7 +174,7 @@ public class JdbcFriendsDao implements FriendsDao{
             secondUser = jdbcTemplate.queryForObject(principalSql, String.class, rowSet.getInt("user_id_receive"));
             firstUser = jdbcTemplate.queryForObject(principalSql, String.class, rowSet.getInt("user_id_request"));
         }catch(CannotGetJdbcConnectionException | DataIntegrityViolationException e){
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "wowowow");
         }
         friends.setUserNameReceived(secondUser);
         friends.setUserNameRequest(firstUser);
