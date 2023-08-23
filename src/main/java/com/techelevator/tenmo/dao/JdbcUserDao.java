@@ -70,7 +70,8 @@ public class JdbcUserDao implements UserDao {
         }
         String sqlInsert = "insert into account (user_id, balance) values (?,?);";
         try{
-            jdbcTemplate.queryForObject(sqlInsert, int.class,newUserId,new BigDecimal("1000"));
+            BigDecimal decimal = new BigDecimal("1000");
+            jdbcTemplate.update(sqlInsert,newUserId,decimal);
         }catch (DataAccessException e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
         }
