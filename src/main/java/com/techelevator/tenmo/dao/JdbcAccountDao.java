@@ -24,8 +24,8 @@ public class JdbcAccountDao implements AccountDao{
     @Override
     public List<Account> getAccountsByUser(String username) {
         List<Account> accounts = null;
-        String sqlUser = "select user_id from user where username = ?;";
-        String sql = "select user.username, account.balance from account join user on account.user_id = user.user_id where user.user_id = ?;";
+        String sqlUser = "select user_id from tenmo_user where username = ?;";
+        String sql = "select tenmo_user.username, account.balance from account join tenmo_user on account.user_id = tenmo_user.user_id where tenmo_user.user_id = ?;";
         try{
             int userId = jdbcTemplate.queryForObject(sqlUser,int.class,username);
             SqlRowSet results = jdbcTemplate.queryForRowSet(sql,userId);
@@ -42,7 +42,7 @@ public class JdbcAccountDao implements AccountDao{
 
     @Override
     public Account getAccountById(int id) {
-        String sql = "select * fro account where account_id = ?;";
+        String sql = "select * from account where account_id = ?;";
 
         try{
             return mapRowToAccount(jdbcTemplate.queryForRowSet(sql,id));
@@ -53,7 +53,7 @@ public class JdbcAccountDao implements AccountDao{
 
     @Override
     public Account createAccount(String username) {
-        String sqlUser = "select user_id from user where username = ?;";
+        String sqlUser = "select user_id from tenmo_user where username = ?;";
         String sqlInsert = "insert into account (user_id, balance) values (?,?) returning account_id;";
         int accountId;
         try{
