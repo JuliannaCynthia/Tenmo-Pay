@@ -2,6 +2,7 @@ package com.techelevator.tenmo.dao;
 
 import com.techelevator.tenmo.exceptions.DaoException;
 import com.techelevator.tenmo.model.Transfer;
+import com.techelevator.tenmo.model.TransferDTO;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
@@ -42,8 +43,8 @@ public class JdbcTransferDao implements TransferDao{
 
         try {
             Integer newTransferId = jdbcTemplate.queryForObject(sql, Integer.class,
-                    transfer.getTransferToUserId(),
-                    transfer.getTransferFromUserId(),
+                    transfer.getTransferToUsername(),
+                    transfer.getTransferFromUsername(),
                     transfer.getTransferAmount(),
                     transfer.isPending(),
                     transfer.isApproved());
@@ -72,24 +73,24 @@ public class JdbcTransferDao implements TransferDao{
 
     //TODO: make optional requestParam in controller
     @Override
-    public List<Transfer> viewTransferFromHistory(int userId, Integer friendUserId) {
-        List<Transfer> transferList = new ArrayList<>();
+    public List<TransferDTO> viewTransferFromHistory(String transferFromUsername, String transferToUserName) {
+        List<TransferDTO> transferList = new ArrayList<>();
         String sql = SELECT_TRANSFER_BASE_SQL + "WHERE user_transfer_from = ?";
 
         //checks if friendUserName was input as a requestParameter and adjust sql as necessary.
-        if(friendUserId != null){
+        if(transferToUserName != null){
             sql = " AND user_transfer_to = ?;";
         }
 
         try {
             SqlRowSet results;
-            if(friendUserId != null) {
-                results = jdbcTemplate.queryForRowSet(sql, userId, friendUserId);
+            if(transferToUserName != null) {
+                results = jdbcTemplate.queryForRowSet(sql, transferFromUsername, transferToUserName);
             } else {
-                results = jdbcTemplate.queryForRowSet(sql, userId);
+                results = jdbcTemplate.queryForRowSet(sql, transferFromUsername);
             }
                 while (results.next()) {
-                    transferList.add(mapRowSetToTransfer(results));
+                    transferList.add(mapRowSetToTransferDTO(results));
                 }
 
         } catch (DataAccessException e){
@@ -99,23 +100,23 @@ public class JdbcTransferDao implements TransferDao{
     }
 
     @Override
-    public List<Transfer> viewTransferToHistory(int userId, Integer friendUserId){
-        List<Transfer> transferList = new ArrayList<>();
+    public List<TransferDTO> viewTransferToHistory(String transferToUsername, String transferFromUsername){
+        List<TransferDTO> transferList = new ArrayList<>();
         String sql = SELECT_TRANSFER_BASE_SQL + "WHERE user_transfer_to = ?";
 
-        if(friendUserId != null){
+        if(transferFromUsername != null){
             sql = " AND user_transfer_from = ?;";
         }
 
         try {
             SqlRowSet results;
-            if(friendUserId != null) {
-                results = jdbcTemplate.queryForRowSet(sql, userId, friendUserId);
+            if(transferFromUsername != null) {
+                results = jdbcTemplate.queryForRowSet(sql, transferToUsername, transferFromUsername);
             } else {
-                results = jdbcTemplate.queryForRowSet(sql, userId);
+                results = jdbcTemplate.queryForRowSet(sql, transferToUsername);
             }
             while(results.next()){
-                transferList.add(mapRowSetToTransfer(results));
+                transferList.add(mapRowSetToTransferDTO(results));
             }
         } catch (DataAccessException e){
             throw new DaoException(e.getMessage(), e);
@@ -124,16 +125,16 @@ public class JdbcTransferDao implements TransferDao{
     }
 
     @Override
-    public List<Transfer> viewPendingTransfers(Integer userId) {
-        List<Transfer> transferList = new ArrayList<>();
+    public List<TransferDTO> viewPendingTransfers(String username) {
+        List<TransferDTO> transferList = new ArrayList<>();
         String sql = SELECT_TRANSFER_BASE_SQL + "WHERE (user_transfer_from = ? " +
                                                 "OR user_transfer_to = ?) " +
                                                 "AND is_pending = true ;";
 
         try {
-            SqlRowSet results = jdbcTemplate.queryForRowSet(sql, userId, userId);
+            SqlRowSet results = jdbcTemplate.queryForRowSet(sql, username, username);
             while(results.next()){
-                transferList.add(mapRowSetToTransfer(results));
+                transferList.add(mapRowSetToTransferDTO(results));
             }
         }catch (DataAccessException e){
             throw new DaoException(e.getMessage(), e);
@@ -145,11 +146,21 @@ public class JdbcTransferDao implements TransferDao{
         Transfer transfer = new Transfer();
         transfer.setTransferId(rowSet.getInt("transfer_id"));
         transfer.setTransferAmount(rowSet.getBigDecimal("transfer_amount"));
-        transfer.setTransferToUserId(rowSet.getInt("user_transfer_to"));
-        transfer.setTransferFromUserId(rowSet.getInt("user_transfer_from"));
+        transfer.setTransferToUsername(rowSet.getString("user_transfer_to"));
+        transfer.setTransferFromUsername(rowSet.getString("user_transfer_from"));
         transfer.setPending(rowSet.getBoolean("is_pending"));
         transfer.setApproved(rowSet.getBoolean("is_approved"));
 
         return transfer;
+    }
+
+    private TransferDTO mapRowSetToTransferDTO(SqlRowSet rowSet){
+        TransferDTO transferDTO = new TransferDTO();
+        transferDTO.setTransferId(rowSet.getInt("transfer_id"));
+        transferDTO.setTransferAmount(rowSet.getBigDecimal("transfer_amount"));
+        transferDTO.setTransferFromUsername(rowSet.getString("user_transfer_from"));
+        transferDTO.setTransferToUsername(rowSet.getString("user_transfer_to"));
+
+        return transferDTO;
     }
 }

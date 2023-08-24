@@ -1,14 +1,14 @@
 package com.techelevator.tenmo.controller;
 
 import com.techelevator.tenmo.dao.TransferDao;
-import com.techelevator.tenmo.dao.UserDao;
 import com.techelevator.tenmo.model.Transfer;
-import com.techelevator.tenmo.model.User;
+import com.techelevator.tenmo.model.TransferDTO;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.security.Principal;
 import java.util.List;
 
 @PreAuthorize("isAuthenticated()")
@@ -16,11 +16,11 @@ import java.util.List;
 @RestController
 public class TransferController {
     private TransferDao transferDao;
-    private UserDao userDao;
 
-    public TransferController(TransferDao transferDao, UserDao userDao) {
+
+    public TransferController(TransferDao transferDao) {
         this.transferDao = transferDao;
-        this.userDao = userDao;
+
     }
 
     @ResponseStatus(HttpStatus.CREATED)
@@ -37,14 +37,13 @@ public class TransferController {
 
 
     @RequestMapping(value = "/history", method = RequestMethod.GET)
-    public List<Transfer> transferHistory(@Valid @RequestBody User user,
+    public List<TransferDTO> transferHistory(Principal principal,
                                           @RequestParam (required = false) String friendUsername){
 
-        int userId = user.getId();
-        Integer friendUserId = userDao.findIdByUsername(friendUsername);
+        String username = principal.getName();
 
-        List<Transfer> transferList = transferDao.viewTransferFromHistory(userId, friendUserId);
-        transferList.addAll(transferDao.viewTransferToHistory(userId, friendUserId));
+        List<TransferDTO> transferList = transferDao.viewTransferFromHistory(username, friendUsername);
+        transferList.addAll(transferDao.viewTransferToHistory(username, friendUsername));
 
         return transferList;
     }
@@ -55,7 +54,7 @@ public class TransferController {
     }
 
     @RequestMapping(value = "/pending", method = RequestMethod.GET)
-    public List<Transfer> viewPendingTransfers(@Valid @RequestBody User user){
-        return transferDao.viewPendingTransfers(user.getId());
+    public List<TransferDTO> viewPendingTransfers(Principal principal){
+        return transferDao.viewPendingTransfers(principal.getName());
     }
 }

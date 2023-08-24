@@ -1,35 +1,27 @@
 package com.techelevator.tenmo.model;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import java.math.BigDecimal;
 
-public class Transfer {
-    @JsonProperty("transfer_id")
+public class TransferDTO {
+    @NotBlank
     private int transferId;
-    @JsonProperty("transfer_amount")
+    @Min(value = 0)
     private BigDecimal transferAmount;
     @NotBlank
-    @JsonProperty("user_transfer_from")
     private String transferFromUsername;
     @NotBlank
-    @JsonProperty("user_transfer_to")
     private String transferToUsername;
-    @JsonProperty("is_pending")
-    private boolean isPending = true;
-    @JsonProperty("is_approved")
-    private boolean isApproved = false;
 
-    public Transfer(){}
-
-    public Transfer(int transferId, BigDecimal transferAmount, String transferFromUsername, String transferToUsername, boolean isPending, boolean isApproved) {
+    public TransferDTO(int transferId, BigDecimal transferAmount, String transferFromUsername, String transferToUsername){
         this.transferId = transferId;
         this.transferAmount = transferAmount;
         this.transferFromUsername = transferFromUsername;
         this.transferToUsername = transferToUsername;
-        this.isPending = isPending;
-        this.isApproved = isApproved;
+    }
+
+    public TransferDTO() {
     }
 
     public int getTransferId() {
@@ -64,20 +56,10 @@ public class Transfer {
         this.transferToUsername = transferToUsername;
     }
 
-
-    public boolean isPending() {
-        return isPending;
-    }
-
-    public void setPending(boolean pending) {
-        isPending = pending;
-    }
-
-    public boolean isApproved() {
-        return isApproved;
-    }
-
-    public void setApproved(boolean approved) {
-        isApproved = approved;
+    @Override
+    public String toString() {
+        String string = String.format("{ \"transferId\" : %s,\n\"transferAmount\" : %s,\n\"from\" : %s,\n\"to\" : %s }",
+                transferId, transferAmount, transferFromUsername, transferToUsername);
+        return string;
     }
 }
