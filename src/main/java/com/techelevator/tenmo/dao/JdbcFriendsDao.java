@@ -106,6 +106,7 @@ public class JdbcFriendsDao implements FriendsDao{
                 throw new ResponseStatusException(HttpStatus.EXPECTATION_FAILED, "Friend requests must be approved by recipient.");
             }else{
                 int rowsAffected =jdbcTemplate.update(bigSql,secId,userId,true,userId,secId);
+                System.out.println(rowsAffected);
                 if(rowsAffected!=1){
                     throw new ResponseStatusException(HttpStatus.NOT_FOUND);
                 }

@@ -39,7 +39,7 @@ public class AccountController {
         return jdbcAccount.updateAccount(account);
     }
 
-    @RequestMapping(path = "/account/{id}", method = RequestMethod.GET)
+    @RequestMapping(path = "/account/{accountId}", method = RequestMethod.GET)
     public AccountDTO getAccountById(Principal principal, @PathVariable int accountId){
         Account account = jdbcAccount.getAccountById(accountId);
         AccountDTO accountDTO = new AccountDTO();
