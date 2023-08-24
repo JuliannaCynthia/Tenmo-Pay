@@ -11,6 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import javax.validation.Valid;
 import java.security.Principal;
@@ -35,7 +36,15 @@ public class FriendsController {
 
     @RequestMapping(path = "/friends/new-addition", method = RequestMethod.POST)
     public int addFriend(Principal principal,@Valid @RequestBody Friends friends){
-        return jdbcFriend.addFriend(principal.getName(), friends.getUserNameReceived());
+        boolean userCheck = FBL.checkLoggedInUserRequest(principal.getName(), friends);
+        boolean sameCheck = FBL.noSameFriendRequests(friends);
+        boolean diffCheck = FBL.checkDifferentUsers(friends);
+        boolean falseCheck = FBL.setToFalse(friends);
+        if(userCheck&&sameCheck&&diffCheck&&falseCheck){
+            return jdbcFriend.addFriend(principal.getName(), friends.getUserNameReceived());
+        }else{
+            throw new ResponseStatusException(HttpStatus.EXPECTATION_FAILED, "One or more issues with your request. Please try again.");
+        }
     }
     @RequestMapping(path = "/friends/pending", method = RequestMethod.GET)
     public List<FriendsDTO> viewPendingFriends(Principal principal){
@@ -44,24 +53,41 @@ public class FriendsController {
     @ResponseStatus(HttpStatus.ACCEPTED)
     @RequestMapping(path = "friends/pending", method = RequestMethod.PUT)
     public int approveFriend(Principal principal, @Valid @RequestBody Friends friends){
-       boolean bizCheck = FBL.checkLoggedInUser(principal.getName(), friends);
-
-
-        return jdbcFriend.approveFriend(principal.getName(), friends.getUserNameRequest());
+       boolean bizCheck = FBL.checkLoggedInUserRecipient(principal.getName(), friends);
+        if(!bizCheck){
+            throw new ResponseStatusException(HttpStatus.EXPECTATION_FAILED, "You cannot approve this request. Please sign in as the correct user.");
+        }
+        boolean diffCheck = FBL.checkDifferentUsers(friends);
+        boolean falseCheck = FBL.setToFalse(friends);
+        if(diffCheck&&falseCheck){
+            return jdbcFriend.approveFriend(principal.getName(), friends.getUserNameRequest());
+        }else{
+            throw new ResponseStatusException(HttpStatus.EXPECTATION_FAILED, "Please submit valid friend to approve.");
+        }
     }
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @RequestMapping(path = "friends/pending", method = RequestMethod.DELETE)
     public int denyFriend(Principal principal, @Valid @RequestBody Friends friends){
-        return jdbcFriend.denyFriend(principal.getName(), friends.getUserNameRequest());
+        boolean bizCheck = FBL.checkLoggedInUserRecipient(principal.getName(), friends);
+        if(!bizCheck){
+            throw new ResponseStatusException(HttpStatus.EXPECTATION_FAILED, "You cannot deny this request. Please sign in as the correct user.");
+        }
+        boolean diffCheck = FBL.checkDifferentUsers(friends);
+        boolean falseCheck = FBL.setToFalse(friends);
+        if(diffCheck&&falseCheck){
+            return jdbcFriend.denyFriend(principal.getName(), friends.getUserNameRequest());
+        }else{
+            throw new ResponseStatusException(HttpStatus.EXPECTATION_FAILED, "Please submit valid friend to approve.");
+        }
     }
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @RequestMapping(path = "friends/remove", method = RequestMethod.DELETE)
     public int removeFriend(Principal principal, @Valid @RequestBody Friends friends){
-        if(friends.getUserNameReceived().equals(principal.getName())) {
+        boolean userCheck = FBL.checkLoggedInUserRecipient(principal.getName(), friends);
+        if(!userCheck){
+            throw new ResponseStatusException(HttpStatus.EXPECTATION_FAILED, "You cannot approve this request. Please sign in as the correct user.");
+        }else {
             return jdbcFriend.deleteFriend(principal.getName(), friends.getUserNameRequest());
-        }else{
-            return jdbcFriend.deleteFriend(principal.getName(), friends.getUserNameReceived());
-
         }
     }
 
