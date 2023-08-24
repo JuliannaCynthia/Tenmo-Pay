@@ -21,16 +21,14 @@ public class Transfer {
     private String transferFromUsername;
 
 
-    @NotBlank
-    @JsonProperty("account_id")
+    @JsonProperty("account_number_from")
     private int accountNumberFrom;
 
     @NotBlank
     @JsonProperty("user_transfer_to")
     private String transferToUsername;
 
-    @NotBlank
-    @JsonProperty("account_id")
+    @JsonProperty("account_number_to")
     private int accountNumberTo;
 
     @JsonProperty("is_pending")

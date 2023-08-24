@@ -26,6 +26,22 @@ public class TransferBusinessLogic {
         return accountBalance.compareTo(transferAmount) >= 0;
     }
 
+    public Account subtractFromSenderAccount(Transfer transfer, Account account){
+        BigDecimal transferAmount = transfer.getTransferAmount();
+        BigDecimal accountBalance = account.getBalance();
+
+        account.setBalance(accountBalance.subtract(transferAmount));
+        return account;
+    }
+
+    public Account addToReceivingAccount(Transfer transfer, Account account){
+        BigDecimal transferAmount = transfer.getTransferAmount();
+        BigDecimal accountBalance = account.getBalance();
+
+        account.setBalance(accountBalance.add(transferAmount));
+        return account;
+    }
+
 
 
 

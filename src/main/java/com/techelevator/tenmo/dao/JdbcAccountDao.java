@@ -105,21 +105,6 @@ public class JdbcAccountDao implements AccountDao{
         }
     }
 
-    @Override
-    public int updateAccountBalance(Account account){
-        String sql = "UPDATE account SET balance = ? WHERE account_id =?;";
-        int rows;
-        try{
-            rows = jdbcTemplate.update(sql, account.getBalance(), account.getAccountId());
-            if(rows != 1) {
-                throw new ResponseStatusException(HttpStatus.PRECONDITION_FAILED);
-            }
-            return rows;
-        } catch (DataAccessException e) {
-            throw new DaoException(e.getMessage(), e);
-        }
-    }
-
     public Account mapRowToAccount(SqlRowSet rowSet){
         Account account = new Account();
         account.setUserId(rowSet.getInt("user_id"));

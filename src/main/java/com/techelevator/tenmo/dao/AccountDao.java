@@ -13,6 +13,4 @@ public interface AccountDao {
     Account createAccount(String username);
     Account updateAccount(Account account);
     int deleteAccount(Account account);
-    int updateAccountBalance(Account account);
-
 }

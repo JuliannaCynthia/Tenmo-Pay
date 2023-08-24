@@ -14,6 +14,5 @@ public class AccountBusinessLogic {
         userDao = new JdbcUserDao(jdbcTemplate);
     }
 
-    public boolean
 
 }

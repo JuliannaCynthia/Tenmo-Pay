@@ -1,17 +1,21 @@
 package com.techelevator.tenmo.model;
 
-import javax.validation.constraints.Min;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+import javax.validation.constraints.DecimalMin;
 import javax.validation.constraints.NotBlank;
 import java.math.BigDecimal;
 
 public class TransferDTO {
     @NotBlank
     private int transferId;
-    @Min(value = 0)
+    @DecimalMin(value = "0.00", inclusive = false)
     private BigDecimal transferAmount;
     @NotBlank
+    @JsonProperty("from")
     private String transferFromUsername;
     @NotBlank
+    @JsonProperty("to")
     private String transferToUsername;
 
     public TransferDTO(int transferId, BigDecimal transferAmount, String transferFromUsername, String transferToUsername){
@@ -58,7 +62,7 @@ public class TransferDTO {
 
     @Override
     public String toString() {
-        String string = String.format("{ \"transferId\" : %s,\n\"transferAmount\" : %s,\n\"from\" : %s,\n\"to\" : %s }",
+        String string = String.format("{ \"transferId\" : %s,\n\"transferAmount\" : $%s,\n\"from\" : %s,\n\"to\" : %s }",
                 transferId, transferAmount, transferFromUsername, transferToUsername);
         return string;
     }

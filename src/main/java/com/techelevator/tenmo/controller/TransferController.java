@@ -4,6 +4,7 @@ package com.techelevator.tenmo.controller;
 import com.techelevator.tenmo.businesslogic.TransferBusinessLogic;
 import com.techelevator.tenmo.dao.AccountDao;
 import com.techelevator.tenmo.dao.TransferDao;
+import com.techelevator.tenmo.model.Account;
 import com.techelevator.tenmo.model.Transfer;
 import com.techelevator.tenmo.model.TransferDTO;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,7 +44,14 @@ public class TransferController {
     @RequestMapping(value = "", method = RequestMethod.PUT)
     public Integer respondToTransferRequest(Principal principal, @Valid @RequestBody Transfer transfer) {
         boolean isApproved = transfer.isApproved();
+        Account sendingAccount = accountDao.getAccountById(transfer.getAccountNumberFrom());
+        Account receivingAccount = accountDao.getAccountById(transfer.getAccountNumberTo());
+
         if (isApproved && businessLogic.senderHasEnoughMoney(transfer)) {
+            sendingAccount = businessLogic.subtractFromSenderAccount(transfer, sendingAccount);
+            receivingAccount = businessLogic.addToReceivingAccount(transfer, receivingAccount);
+            accountDao.updateAccount(sendingAccount);
+            accountDao.updateAccount(receivingAccount);
 
             return transferDao.respondToTransferRequest(transfer);
         } else {
@@ -52,23 +60,23 @@ public class TransferController {
     }
 
 
-        @RequestMapping(value = "/history", method = RequestMethod.GET)
-        public List<TransferDTO> transferHistory (Principal principal,
-                @RequestParam(required = false) String friendUsername){
+    @RequestMapping(value = "/history", method = RequestMethod.GET)
+    public List<TransferDTO> transferHistory(Principal principal,
+                                             @RequestParam(required = false) String friendUsername) {
 
-            List<TransferDTO> transferList = transferDao.viewTransferFromHistory(principal.getName(), friendUsername);
-            transferList.addAll(transferDao.viewTransferToHistory(principal.getName(), friendUsername));
+        List<TransferDTO> transferList = transferDao.viewTransferFromHistory(principal.getName(), friendUsername);
+        transferList.addAll(transferDao.viewTransferToHistory(principal.getName(), friendUsername));
 
-            return transferList;
-        }
-
-        @RequestMapping(value = "/history/{transferId}", method = RequestMethod.GET)
-        public Transfer getTransferById (@PathVariable Integer transferId){
-            return transferDao.getTransferById(transferId);
-        }
-
-        @RequestMapping(value = "/pending", method = RequestMethod.GET)
-        public List<TransferDTO> viewPendingTransfers (Principal principal){
-            return transferDao.viewPendingTransfers(principal.getName());
-        }
+        return transferList;
     }
+
+    @RequestMapping(value = "/history/{transferId}", method = RequestMethod.GET)
+    public Transfer getTransferById(@PathVariable Integer transferId) {
+        return transferDao.getTransferById(transferId);
+    }
+
+    @RequestMapping(value = "/pending", method = RequestMethod.GET)
+    public List<TransferDTO> viewPendingTransfers(Principal principal) {
+        return transferDao.viewPendingTransfers(principal.getName());
+    }
+}
