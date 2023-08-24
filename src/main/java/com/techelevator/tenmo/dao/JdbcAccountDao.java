@@ -89,7 +89,7 @@ public class JdbcAccountDao implements AccountDao{
     }
 
     @Override
-    public void deleteAccount(Account account) {
+    public int deleteAccount(Account account) {
         String sql = "DELETE FROM account WHERE account_id = ? AND user_id = ?;";
         int rows;
         try{
@@ -97,6 +97,7 @@ public class JdbcAccountDao implements AccountDao{
            if(rows!=1){
                throw new ResponseStatusException(HttpStatus.PRECONDITION_FAILED);
            }
+           return rows;
         }catch (CannotGetJdbcConnectionException | DataIntegrityViolationException e){
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }
