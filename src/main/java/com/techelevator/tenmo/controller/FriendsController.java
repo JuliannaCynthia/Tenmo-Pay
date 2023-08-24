@@ -34,8 +34,23 @@ public class FriendsController {
     }
     @ResponseStatus(HttpStatus.ACCEPTED)
     @RequestMapping(path = "friends/pending", method = RequestMethod.PUT)
-    public void approveFriend(Principal principal, @Valid @RequestBody Friends friends){
-        jdbcFriend.approveFriend(principal.getName(), friends.getUserNameReceived());
+    public int approveFriend(Principal principal, @Valid @RequestBody Friends friends){
+        return jdbcFriend.approveFriend(principal.getName(), friends.getUserNameRequest());
+    }
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @RequestMapping(path = "friends/pending", method = RequestMethod.DELETE)
+    public int denyFriend(Principal principal, @Valid @RequestBody Friends friends){
+        return jdbcFriend.denyFriend(principal.getName(), friends.getUserNameRequest());
+    }
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @RequestMapping(path = "friends/remove", method = RequestMethod.DELETE)
+    public int removeFriend(Principal principal, @Valid @RequestBody Friends friends){
+        if(friends.getUserNameReceived().equals(principal.getName())) {
+            return jdbcFriend.deleteFriend(principal.getName(), friends.getUserNameRequest());
+        }else{
+            return jdbcFriend.deleteFriend(principal.getName(), friends.getUserNameReceived());
+
+        }
     }
 
 

@@ -13,8 +13,8 @@ public interface FriendsDao {
     int addFriend(String userName, String foreignUserName);
     List<FriendsDTO> pendingFriendships(String username);
 
-    void approveFriend(String username, String foreignUserName);
-    void denyFriend(String username, String foreignUserName);
-    void deleteFriend(String username, String foreignUserName);
+    int approveFriend(String username, String foreignUserName);
+    int denyFriend(String username, String foreignUserName);
+    int deleteFriend(String username, String userNameRequest);
 
 }
