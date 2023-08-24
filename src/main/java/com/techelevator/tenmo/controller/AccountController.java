@@ -2,6 +2,7 @@ package com.techelevator.tenmo.controller;
 
 import com.techelevator.tenmo.dao.AccountDao;
 import com.techelevator.tenmo.model.Account;
+import com.techelevator.tenmo.model.AccountDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -36,6 +37,15 @@ public class AccountController {
     @RequestMapping(path = "/account", method = RequestMethod.PUT)
     public Account update(@Valid @RequestBody Account account){
         return jdbcAccount.updateAccount(account);
+    }
+
+    @RequestMapping(path = "/account/{id}", method = RequestMethod.GET)
+    public AccountDTO getAccountById(Principal principal, @PathVariable int accountId){
+        Account account = jdbcAccount.getAccountById(accountId);
+        AccountDTO accountDTO = new AccountDTO();
+        accountDTO.setUsername(principal.getName());
+        accountDTO.setAccountBalance(account.getBalance());
+        return accountDTO;
     }
 
 

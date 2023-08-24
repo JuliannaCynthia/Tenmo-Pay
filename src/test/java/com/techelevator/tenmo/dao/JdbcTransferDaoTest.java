@@ -13,8 +13,8 @@ import static org.junit.Assert.*;
 
 public class JdbcTransferDaoTest extends BaseDaoTests{
 
-    private final Transfer TEST_TRANSFER1 = new Transfer(3001, new BigDecimal(100), "user", "bob", false, true);
-    private final Transfer TEST_TRANSFER2 = new Transfer(3002, new BigDecimal(100), "bob", "user", true, false);
+    private final Transfer TEST_TRANSFER1 = new Transfer(3001, new BigDecimal(100), "user",2002 ,"bob", false, true);
+    private final Transfer TEST_TRANSFER2 = new Transfer(3002, new BigDecimal(100), "bob", 2001, "user", true, false);
     private TransferDao sut;
 
     @Before

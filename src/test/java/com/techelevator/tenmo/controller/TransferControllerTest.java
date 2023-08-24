@@ -94,9 +94,7 @@ public class TransferControllerTest {
 
     @Test
     public void transferHistory() throws Exception {
-
         mockMvc.perform(get("/transfer/history")
-                .contentType(MediaType.APPLICATION_JSON)
                 .header("Authorization", "Bearer " + bobToken))
                 .andExpect(jsonPath("$", hasSize(2)));
     }
