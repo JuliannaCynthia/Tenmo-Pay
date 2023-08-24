@@ -23,11 +23,15 @@ public class Transfer {
 
     @NotBlank
     @JsonProperty("account_id")
-    private int accountNumber;
+    private int accountNumberFrom;
 
     @NotBlank
     @JsonProperty("user_transfer_to")
     private String transferToUsername;
+
+    @NotBlank
+    @JsonProperty("account_id")
+    private int accountNumberTo;
 
     @JsonProperty("is_pending")
     private boolean isPending = true;
@@ -39,7 +43,7 @@ public class Transfer {
 
     public Transfer(){}
 
-    public Transfer(int transferId, BigDecimal transferAmount, String transferFromUsername, int accountNumber,String transferToUsername, boolean isPending, boolean isApproved) {
+    public Transfer(int transferId, BigDecimal transferAmount, String transferFromUsername, int accountNumberFrom, String transferToUsername, boolean isPending, boolean isApproved) {
         this.transferId = transferId;
         this.transferAmount = transferAmount;
         this.transferFromUsername = transferFromUsername;
@@ -97,11 +101,19 @@ public class Transfer {
         isApproved = approved;
     }
 
-    public int getAccountNumber() {
-        return accountNumber;
+    public int getAccountNumberFrom() {
+        return accountNumberFrom;
     }
 
-    public void setAccountNumber(int accountNumber) {
-        this.accountNumber = accountNumber;
+    public void setAccountNumberFrom(int accountNumberFrom) {
+        this.accountNumberFrom = accountNumberFrom;
+    }
+
+    public int getAccountNumberTo() {
+        return accountNumberTo;
+    }
+
+    public void setAccountNumberTo(int accountNumberTo) {
+        this.accountNumberTo = accountNumberTo;
     }
 }

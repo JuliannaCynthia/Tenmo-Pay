@@ -1,6 +1,8 @@
 package com.techelevator.tenmo.dao;
 
+import com.techelevator.tenmo.exceptions.DaoException;
 import com.techelevator.tenmo.model.Account;
+import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.jdbc.CannotGetJdbcConnectionException;
@@ -100,6 +102,21 @@ public class JdbcAccountDao implements AccountDao{
            return rows;
         }catch (CannotGetJdbcConnectionException | DataIntegrityViolationException e){
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @Override
+    public int updateAccountBalance(Account account){
+        String sql = "UPDATE account SET balance = ? WHERE account_id =?;";
+        int rows;
+        try{
+            rows = jdbcTemplate.update(sql, account.getBalance(), account.getAccountId());
+            if(rows != 1) {
+                throw new ResponseStatusException(HttpStatus.PRECONDITION_FAILED);
+            }
+            return rows;
+        } catch (DataAccessException e) {
+            throw new DaoException(e.getMessage(), e);
         }
     }
 

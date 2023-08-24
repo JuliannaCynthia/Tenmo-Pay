@@ -71,7 +71,7 @@ public class JdbcTransferDao implements TransferDao{
         return rowsAffected;
     }
 
-    //TODO: make optional requestParam in controller
+
     @Override
     public List<TransferDTO> viewTransferFromHistory(String transferFromUsername, String transferToUserName) {
         List<TransferDTO> transferList = new ArrayList<>();
