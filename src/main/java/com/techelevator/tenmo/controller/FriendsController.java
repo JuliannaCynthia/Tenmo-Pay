@@ -5,6 +5,7 @@ import com.techelevator.tenmo.dao.FriendsDao;
 import com.techelevator.tenmo.model.Friends;
 import com.techelevator.tenmo.model.FriendsDTO;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
@@ -30,6 +31,11 @@ public class FriendsController {
     @RequestMapping(path = "/friends/pending", method = RequestMethod.GET)
     public List<FriendsDTO> viewPendingFriends(Principal principal){
         return jdbcFriend.pendingFriendships(principal.getName());
+    }
+    @ResponseStatus(HttpStatus.ACCEPTED)
+    @RequestMapping(path = "friends/pending", method = RequestMethod.PUT)
+    public void approveFriend(Principal principal, @Valid @RequestBody Friends friends){
+        jdbcFriend.approveFriend(principal.getName(), friends.getUserNameReceived());
     }
 
 

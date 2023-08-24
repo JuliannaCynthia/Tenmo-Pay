@@ -17,18 +17,19 @@ import java.util.List;
 public class JdbcAccountDao implements AccountDao{
 
     private JdbcTemplate jdbcTemplate;
+    private UserDao userDao;
 
     public JdbcAccountDao(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
+        userDao = new JdbcUserDao(jdbcTemplate);
     }
 
     @Override
     public List<Account> getAccountsByUser(String username) {
-        List<Account> accounts = null;
-        String sqlUser = "select user_id from tenmo_user where username = ?;";
-        String sql = "select * from account where user_id = ?";
+        List<Account> accounts;
+        String sql = "SELECT account_id,user_id,balance FROM account WHERE user_id = ?";
         try{
-            int userId = jdbcTemplate.queryForObject(sqlUser,int.class,username);
+            int userId = userDao.findIdByUsername(username);
             SqlRowSet results = jdbcTemplate.queryForRowSet(sql,userId);
             accounts = new ArrayList<>();
             while(results.next()){
@@ -42,7 +43,7 @@ public class JdbcAccountDao implements AccountDao{
 
     @Override
     public Account getAccountById(int id) {
-        String sql = "select * from account where account_id = ?;";
+        String sql = "SELECT account_id,user_id,balance FROM account WHERE account_id = ?;";
         Account account = null;
         try{
             SqlRowSet rowSet = jdbcTemplate.queryForRowSet(sql,id);
@@ -57,14 +58,13 @@ public class JdbcAccountDao implements AccountDao{
 
     @Override
     public Account createAccount(String username) {
-        String sqlUser = "select user_id from tenmo_user where username = ?;";
-        String sqlInsert = "insert into account (user_id, balance) values (?,?) returning account_id;";
+        String sqlInsert = "INSERT INTO account (user_id, balance) VALUES (?,?) RETURNING account_id;";
         int accountId;
         try{
-            int userId = jdbcTemplate.queryForObject(sqlUser,int.class,username);
+            int userId = userDao.findIdByUsername(username);
+
             BigDecimal n = new BigDecimal("1000.00");
             accountId =jdbcTemplate.queryForObject(sqlInsert,int.class,userId,n);
-
 
         }catch (CannotGetJdbcConnectionException | DataIntegrityViolationException e){
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
@@ -74,8 +74,8 @@ public class JdbcAccountDao implements AccountDao{
 
     @Override
     public Account updateAccount(Account account) {
-        String sql = "update account set account_id =?, user_id = ?, balance = ? where account_id = ?;";
-        int rowsAffected = 0;
+        String sql = "UPDATE account SET account_id =?, user_id = ?, balance = ? WHERE account_id = ?;";
+        int rowsAffected;
         try{
             rowsAffected = jdbcTemplate.update(sql,account.getAccountId(),account.getUserId(),account.getBalance(),account.getAccountId());
             System.out.println(rowsAffected);
@@ -90,12 +90,15 @@ public class JdbcAccountDao implements AccountDao{
 
     @Override
     public void deleteAccount(Account account) {
-        String sql = "delete from account where account_id = ? and user_id = ?;";
-        int rowsAffected = 0;
+        String sql = "DELETE FROM account WHERE account_id = ? AND user_id = ?;";
+        int rows;
         try{
-            rowsAffected = jdbcTemplate.update(sql,account.getAccountId(),account.getUserId());
+           rows = jdbcTemplate.update(sql,account.getAccountId(),account.getUserId());
+           if(rows!=1){
+               throw new ResponseStatusException(HttpStatus.PRECONDITION_FAILED);
+           }
         }catch (CannotGetJdbcConnectionException | DataIntegrityViolationException e){
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }
     }
 
