@@ -30,7 +30,7 @@ public class AccountController {
     }
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @RequestMapping(path = "/account", method = RequestMethod.DELETE)
-    public void delete(Account account){
+    public void delete(@Valid @RequestBody Account account){
         jdbcAccount.deleteAccount(account);
     }
 

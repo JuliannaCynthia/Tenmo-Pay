@@ -20,29 +20,25 @@ public class FriendlyBusinessLogic {
         userDao = new JdbcUserDao(jdbcTemplate);
     }
 
-    public boolean checkLoggedInUser(String username, Friends friends){
-        if(!username.equals(friends.getUserNameReceived())){
-            return false;
-        }else{
-            return true;
-        }
+    public boolean checkLoggedInUserRecipient(String username, Friends friends){
+        return username.equals(friends.getUserNameReceived());
+    }
+
+    public boolean checkLoggedInUserRequest(String username, Friends friends){
+        return username.equals(friends.getUserNameRequest());
     }
 
     public boolean checkDifferentUsers(Friends friends){
         return !friends.getUserNameReceived().equals(friends.getUserNameRequest());
     }
 
-    public boolean noSameUsers(Friends friends){
+    public boolean noSameFriendRequests(Friends friends){
         String sql = "select * from user_friends where (user_id_request=? and user_id_receive=?) OR (user_id_request = ? and user_id_receive = ?);";
         try{
             int receive=userDao.findIdByUsername(friends.getUserNameReceived());
             int request=userDao.findIdByUsername(friends.getUserNameRequest());
             SqlRowSet rowSet = jdbcTemplate.queryForRowSet(sql,request,receive,receive,request);
-            if(rowSet.next()){
-                return false;
-            }else{
-                return true;
-            }
+            return !rowSet.next();
         }catch(CannotGetJdbcConnectionException | DataIntegrityViolationException e){
             throw new ResponseStatusException(HttpStatus.CONFLICT, "You are already Friends.");
         }
