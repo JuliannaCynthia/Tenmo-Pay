@@ -1,18 +1,23 @@
 package com.techelevator;
 
+import com.techelevator.model.UserToken;
+import com.techelevator.services.AccountsService;
 import com.techelevator.services.InputService;
 import com.techelevator.services.GraphicServices;
-import com.techelevator.services.TenmoService;
+import com.techelevator.services.LoginRegisterService;
 
 public class App {
     private InputService inputService;
     private GraphicServices graphicServices;
-    private TenmoService tenmoService;
+    private LoginRegisterService loginRegisterService;
+    private AccountsService accountsService;
+
+    private UserToken userToken;
 
     public App(){
         this.inputService = new InputService();
         this.graphicServices = new GraphicServices();
-        this.tenmoService = new TenmoService();
+        this.loginRegisterService = new LoginRegisterService();
     }
 
     public static void main(String[] args) {
@@ -22,10 +27,11 @@ public class App {
 
     private void run() {
         graphicServices.openingGraphic();
+
         int menuSelection = -1;
         while (menuSelection != 0){
             graphicServices.loginRegisterMenu();
-            inputService.promptForMenuSelection();
+            menuSelection = inputService.promptForMenuSelection();
 
         }
     }

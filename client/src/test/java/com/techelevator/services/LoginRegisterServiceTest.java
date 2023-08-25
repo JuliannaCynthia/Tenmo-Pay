@@ -10,13 +10,13 @@ import org.junit.Test;
 
 import java.util.Random;
 
-public class TenmoServiceTest {
-    TenmoService tenmoService;
+public class LoginRegisterServiceTest {
+    LoginRegisterService loginRegisterService;
     LoginDTO loginDTO;
 
     @Before
     public void setUp() {
-        tenmoService = new TenmoService();
+        loginRegisterService = new LoginRegisterService();
         loginDTO = new LoginDTO();
         loginDTO.setUsername("bob");
         loginDTO.setPassword("password");
@@ -24,7 +24,7 @@ public class TenmoServiceTest {
 
     @Test
     public void login_returns_not_null() {
-        UserToken userToken = tenmoService.login(loginDTO);
+        UserToken userToken = loginRegisterService.login(loginDTO);
         Assert.assertNotNull(userToken);
     }
 
@@ -35,7 +35,7 @@ public class TenmoServiceTest {
         registerUserDTO.setUsername("USER" + random.nextInt(100000));
         registerUserDTO.setPassword("password");
         boolean isCreated = false;
-        isCreated = tenmoService.register(registerUserDTO);
+        isCreated = loginRegisterService.register(registerUserDTO);
         Assert.assertTrue("User should return created(small chance a identical user already exists, make sure to double check)",isCreated);
     }
 

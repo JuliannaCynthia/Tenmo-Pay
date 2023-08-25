@@ -5,12 +5,10 @@ import com.techelevator.model.LoginDTO;
 import java.util.Scanner;
 
 public class InputService {
-    GraphicServices graphicServices;
     private Scanner scanner;
 
     public InputService(){
         this.scanner = new Scanner(System.in);
-        this.graphicServices = new GraphicServices();
     }
 
 
@@ -22,9 +20,15 @@ public class InputService {
     }
 
 
-    public String promptForMenuSelection(){
+    public int promptForMenuSelection(){
+        int selection = -1;
         System.out.println("Please enter a selection below: \n\n");
-        return scanner.nextLine();
+        try {
+         selection = Integer.parseInt(scanner.nextLine());
+        } catch (NumberFormatException e){
+            System.out.println("Invalid input: Please enter a number");
+        }
+        return selection;
     }
 
     public String promptForUsername(){

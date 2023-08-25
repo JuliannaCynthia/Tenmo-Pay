@@ -1,26 +1,28 @@
 package com.techelevator.services;
 
+import com.techelevator.model.AccountDTO;
 import com.techelevator.model.LoginDTO;
 import com.techelevator.model.RegisterUserDTO;
 import com.techelevator.model.UserToken;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
+import org.springframework.http.*;
 import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestClientResponseException;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 
-public class TenmoService {
+
+public class LoginRegisterService {
 
     public static String TENMO_BASE_URL = "http://localhost:8080";
     private RestTemplate restTemplate = new RestTemplate();
-    private UserToken userToken;
+
 
     public UserToken login(LoginDTO user) {
         HttpEntity<LoginDTO> userHttpEntity = makeUserEntity(user);
-
+        UserToken userToken = null;
         try {
             userToken = restTemplate.postForObject(TENMO_BASE_URL + "/login", userHttpEntity, UserToken.class);
         } catch (RestClientResponseException e) {
@@ -60,4 +62,6 @@ public class TenmoService {
         headers.setContentType(MediaType.APPLICATION_JSON);
         return new HttpEntity<>(user, headers);
     }
+
+
 }
