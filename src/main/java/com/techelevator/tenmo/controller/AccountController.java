@@ -4,6 +4,7 @@ import com.techelevator.tenmo.dao.AccountDao;
 import com.techelevator.tenmo.dao.UserDao;
 import com.techelevator.tenmo.model.Account;
 import com.techelevator.tenmo.model.AccountDTO;
+import com.techelevator.tenmo.model.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import javax.validation.Valid;
+import java.io.File;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
@@ -18,6 +20,8 @@ import java.util.List;
 @RestController
 @PreAuthorize("isAuthenticated()")
 public class AccountController {
+    File file = new File("accountlogs.txt");
+        Logger log = new Logger(file);
     @Autowired
     AccountDao jdbcAccount;
     @Autowired
@@ -35,22 +39,27 @@ public class AccountController {
             accountDTO.setUsername(principal.getName()+ " Account #"+counter);
             accountDTO.setAccountBalance(account.getBalance());
             finalList.add(accountDTO);
+            log.write(principal.getName() + " accessed and viewed Account #" + account.getAccountId());
         }
         return finalList;
     }
     @ResponseStatus(HttpStatus.CREATED)
-    @RequestMapping(path = "/account", method = RequestMethod.POST)
+    @RequestMapping(path = "/account/create", method = RequestMethod.POST)
     public Account newAccount(Principal principal){
-        return jdbcAccount.createAccount(principal.getName());
+        Account account = jdbcAccount.createAccount(principal.getName());
+        log.write(principal.getName() + " created Account #" + account.getAccountId());
+        return account;
     }
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @RequestMapping(path = "/account", method = RequestMethod.DELETE)
     public void delete(@Valid @RequestBody Account account, Principal principal){
         int userId = jdbcUser.findIdByUsername(principal.getName());
         if(userId != account.getUserId()){
+            log.write(principal.getName() + " encountered an error. Deletion failed. Error message (Not Authorized. Please sign in as the correct user.)");
             throw new ResponseStatusException(HttpStatus.EXPECTATION_FAILED, "Not Authorized. Please sign in as the correct user.");
         }else {
             jdbcAccount.deleteAccount(account);
+            log.write(principal.getName() + " successfully deleted Account #" + account.getAccountId());
         }
     }
 
@@ -58,9 +67,13 @@ public class AccountController {
     public Account update(@Valid @RequestBody Account account, Principal principal){
         int userId = jdbcUser.findIdByUsername(principal.getName());
         if(userId != account.getUserId()){
+            log.write(principal.getName() + " encountered an error. Update failed. Error message (Not Authorized. Please sign in as the correct user.)");
             throw new ResponseStatusException(HttpStatus.EXPECTATION_FAILED, "Not Authorized. Please sign in as the correct user.");
         }else {
-            return jdbcAccount.updateAccount(account);
+            Account account1 = jdbcAccount.updateAccount(account);
+
+
+            return account1;
         }
     }
 
