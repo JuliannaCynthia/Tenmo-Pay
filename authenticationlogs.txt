@@ -1,1 +1,16 @@
 08/25/2023 02:31:36 PM | New login from user -> bob
+08/25/2023 03:03:06 PM | New login from user -> bob
+08/25/2023 03:27:37 PM | New login from user -> bob
+08/25/2023 03:28:11 PM | New login from user -> bob
+08/25/2023 03:29:53 PM | New login from user -> bob
+08/25/2023 03:33:31 PM | New user created, username -> boby
+08/25/2023 03:33:31 PM | New user registered. New user -> boby
+08/25/2023 03:56:01 PM | New user created, username -> USER1326
+08/25/2023 03:56:01 PM | New user registered. New user -> USER1326
+08/25/2023 03:58:57 PM | New user created, username -> USER2999
+08/25/2023 03:58:57 PM | New user registered. New user -> USER2999
+08/25/2023 04:00:40 PM | New user created, username -> USER5502
+08/25/2023 04:00:40 PM | New user registered. New user -> USER5502
+08/25/2023 04:04:23 PM | New login from user -> bob
+08/25/2023 04:04:23 PM | New user created, username -> USER98580
+08/25/2023 04:04:23 PM | New user registered. New user -> USER98580
