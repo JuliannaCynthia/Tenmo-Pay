@@ -58,8 +58,7 @@ public class FriendsController {
             throw new ResponseStatusException(HttpStatus.EXPECTATION_FAILED, "You cannot approve this request. Please sign in as the correct user.");
         }
         boolean diffCheck = FBL.checkDifferentUsers(friends);
-        boolean falseCheck = FBL.setToFalse(friends);
-        if(diffCheck&&falseCheck){
+        if(diffCheck){
             return jdbcFriend.approveFriend(principal.getName(), friends.getUserNameRequest());
         }else{
             throw new ResponseStatusException(HttpStatus.EXPECTATION_FAILED, "Please submit valid friend to approve.");
