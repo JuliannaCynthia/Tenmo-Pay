@@ -48,17 +48,17 @@ public class FriendlyBusinessLogic {
     public boolean setToFalse(Friends friends){
         return !friends.isApproved();
     }
-    public boolean transferCredentialsAreFriends(Transfer transfer) {
-        int sender = userDao.findIdByUsername(transfer.getTransferFromUsername());
-        int receiver = userDao.findIdByUsername(transfer.getTransferToUsername());
-        String sql = "select * from user_friends where (user_id_request=? and user_id_receive=?) OR (user_id_request = ? and user_id_receive = ?);";
-        try {
-            SqlRowSet rowSet = jdbcTemplate.queryForRowSet(sql, sender, receiver, receiver, sender);
-            return rowSet.next();
-        } catch (CannotGetJdbcConnectionException | DataIntegrityViolationException e) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
-        }
-    }
+//    public boolean transferCredentialsAreFriends(Transfer transfer) {
+//        int sender = userDao.findIdByUsername(transfer.getTransferFromUsername());
+//        int receiver = userDao.findIdByUsername(transfer.getTransferToUsername());
+//        String sql = "select * from user_friends where (user_id_request=? and user_id_receive=?) OR (user_id_request = ? and user_id_receive = ?);";
+//        try {
+//            SqlRowSet rowSet = jdbcTemplate.queryForRowSet(sql, sender, receiver, receiver, sender);
+//            return rowSet.next();
+//        } catch (CannotGetJdbcConnectionException | DataIntegrityViolationException e) {
+//            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+//        }
+//    }
 
 
 }

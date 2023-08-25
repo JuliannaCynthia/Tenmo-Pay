@@ -32,14 +32,28 @@ public class JdbcFriendsDao implements FriendsDao{
     @Override
     public List<FriendsDTO> getAcceptedFriends(String userName) {
         List<FriendsDTO> friendsDTOS;
-        String sql = "select tenmo_user.username from user_friends join tenmo_user on user_friends.user_id_receive = tenmo_user.user_id " +
-                "join tenmo_user b on user_friends.user_id_request = b.user_id where user_id_request = ? OR user_id_receive = ? AND approved = true;";
+        String usernameGet = "select username from tenmo_user where user_id = ?;";
+        String checkSql = "select user_id_request,user_id_receive from user_friends where user_id_request = ? or user_id_receive = ? and approved = true;";
         try{
             friendsDTOS = new ArrayList<>();
             int userId = userDao.findIdByUsername(userName);
-            SqlRowSet rowSet = jdbcTemplate.queryForRowSet(sql,userId,userId);
+            SqlRowSet rowSet = jdbcTemplate.queryForRowSet(checkSql,userId,userId);
             while(rowSet.next()){
-                friendsDTOS.add(mapToFriendsDto(rowSet));
+                int request = rowSet.getInt("user_id_request");
+                int receive = rowSet.getInt("user_id_receive");
+                if(userId==request){
+                    SqlRowSet name = jdbcTemplate.queryForRowSet(usernameGet, receive);
+                    if(name.next()) {
+                        friendsDTOS.add(mapToFriendsDto(name));
+                    }
+                }else if(userId==receive){
+                    SqlRowSet name = jdbcTemplate.queryForRowSet(usernameGet, request);
+                    if(name.next()) {
+                        friendsDTOS.add(mapToFriendsDto(name));
+                    }
+                }else{
+                    throw new ResponseStatusException(HttpStatus.CONFLICT, "Error. Not valid user.");
+                }
             }
         }catch(CannotGetJdbcConnectionException | DataIntegrityViolationException e){
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
