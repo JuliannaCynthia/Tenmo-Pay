@@ -3,6 +3,7 @@ package com.techelevator.tenmo.dao;
 import com.techelevator.tenmo.exceptions.DaoException;
 import com.techelevator.tenmo.model.Friends;
 import com.techelevator.tenmo.model.FriendsDTO;
+import com.techelevator.tenmo.model.Logger;
 import jdk.jfr.StackTrace;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
@@ -12,6 +13,7 @@ import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Component;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.io.File;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
@@ -20,7 +22,8 @@ import java.util.List;
 
 @Component
 public class JdbcFriendsDao implements FriendsDao{
-
+    File file = new File("friendshiplogs.txt");
+    Logger log = new Logger(file);
     private UserDao userDao;
     private JdbcTemplate jdbcTemplate;
 
@@ -52,10 +55,12 @@ public class JdbcFriendsDao implements FriendsDao{
                         friendsDTOS.add(mapToFriendsDto(name));
                     }
                 }else{
+                    log.write(userName + " encountered an Error. Message -> (Error. Not valid user.)");
                     throw new ResponseStatusException(HttpStatus.CONFLICT, "Error. Not valid user.");
                 }
             }
         }catch(CannotGetJdbcConnectionException | DataIntegrityViolationException e){
+            log.write(userName + " encountered an Error. Data Error or Connection Error.");
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
         }
         return friendsDTOS;
@@ -70,9 +75,10 @@ public class JdbcFriendsDao implements FriendsDao{
             int secId = userDao.findIdByUsername(foreignUserName);
             created= jdbcTemplate.update(sql,userid,secId,false);
         }catch(CannotGetJdbcConnectionException e ){
-            throw new ResponseStatusException(HttpStatus.REQUESTED_RANGE_NOT_SATISFIABLE);
+            log.write(userName + " encountered an Error. Data Error or Connection Error.");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
         } catch(DataIntegrityViolationException e){
-
+            log.write(userName + " encountered an Error. Data Error or Connection Error.");
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "wawawawa");
         }
         return created;
@@ -103,6 +109,7 @@ public class JdbcFriendsDao implements FriendsDao{
                 }
             }
         }catch(CannotGetJdbcConnectionException | DataIntegrityViolationException e){
+            log.write(userName + " encountered an Error. Data Error or Connection Error.");
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
         }
         return friends;
@@ -117,16 +124,19 @@ public class JdbcFriendsDao implements FriendsDao{
             int secId = userDao.findIdByUsername(foreignUserName);
             int userRequestId = jdbcTemplate.queryForObject(neSql, int.class, secId,userId);
             if(userRequestId==userId){
+                log.write(userName + " encountered an Error. Message -> (Friend requests must be approved by recipient.)");
                 throw new ResponseStatusException(HttpStatus.EXPECTATION_FAILED, "Friend requests must be approved by recipient.");
             }else{
                 int rowsAffected =jdbcTemplate.update(bigSql,secId,userId,true,userId,secId);
                 System.out.println(rowsAffected);
                 if(rowsAffected!=1){
+                    log.write(userName + " encountered an Error. Message -> (Not Found, No update performed)");
                     throw new ResponseStatusException(HttpStatus.NOT_FOUND);
                 }
                 return rowsAffected;
             }
         }catch(CannotGetJdbcConnectionException | DataIntegrityViolationException e){
+            log.write(userName + " encountered an Error. Data Error or Connection Error.");
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
         }
     }
@@ -140,16 +150,18 @@ public class JdbcFriendsDao implements FriendsDao{
             int secId = userDao.findIdByUsername(foreignUserName);
             int userRequestId = jdbcTemplate.queryForObject(neSql, int.class, secId,userId);
             if(userRequestId==userId){
+                log.write(userName + " encountered an Error. Message -> (Friend requests must be denied by recipient.)");
                 throw new ResponseStatusException(HttpStatus.EXPECTATION_FAILED);
             }else{
                 int rowsAffected =jdbcTemplate.update(bigSql,secId,userId,false, userId,secId);
                 if(rowsAffected!=1){
+                    log.write(userName + " encountered an Error. Message -> (Not Found, No update performed)");
                     throw new ResponseStatusException(HttpStatus.NOT_FOUND);
                 }
-               int check= deleteFriend(userName,foreignUserName);
-                return check;
+                return deleteFriend(userName,foreignUserName);
             }
         }catch(CannotGetJdbcConnectionException | DataIntegrityViolationException e){
+            log.write(userName + " encountered an Error. Data Error or Connection Error.");
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
         }
     }
@@ -163,10 +175,12 @@ public class JdbcFriendsDao implements FriendsDao{
           int rowsAffected = jdbcTemplate.update(sql,receiver,userId);
             System.out.println(rowsAffected);
           if(rowsAffected != 1){
+              log.write(userName + " encountered an Error. Message -> (Not Found, No update performed)");
               throw new ResponseStatusException(HttpStatus.PRECONDITION_FAILED);
           }
             return rowsAffected;
         }catch(CannotGetJdbcConnectionException | DataIntegrityViolationException e){
+            log.write(userName + " encountered an Error. Data Error or Connection Error.");
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
         }
     }
