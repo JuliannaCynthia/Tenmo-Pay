@@ -29,12 +29,13 @@ public class TransferController {
     private TransferDao transferDao;
     @Autowired
     private AccountDao accountDao;
+
     private final TransferBusinessLogic businessLogic = new TransferBusinessLogic();
 
     @ResponseStatus(HttpStatus.CREATED)
     @RequestMapping(value = "", method = RequestMethod.POST)
     public Transfer createTransfer(Principal principal, @Valid @RequestBody Transfer transfer) {
-        if(transferDao.transferCredentialsAreNotFriends(transfer)){
+        if(!transferDao.transferCredentialsAreNotFriends(transfer)){
             throw new ResponseStatusException(HttpStatus.PRECONDITION_FAILED, "You must be friends to send a transfer.");
         }
 
@@ -56,7 +57,6 @@ public class TransferController {
             receivingAccount = businessLogic.addToReceivingAccount(transfer, receivingAccount);
             accountDao.updateAccount(sendingAccount);
             accountDao.updateAccount(receivingAccount);
-
             return transferDao.respondToTransferRequest(transfer);
         } else {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid recipient: " + principal.getName());

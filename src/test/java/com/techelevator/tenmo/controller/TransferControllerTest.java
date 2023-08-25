@@ -9,8 +9,11 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -25,15 +28,16 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest
+@AutoConfigureMockMvc
 public class TransferControllerTest {
-    @Autowired
-    TransferController transferController;
-    @Autowired
-    AuthenticationController authenticationController;
+//    @Autowired
+//    TransferController transferController;
+//    @Autowired
+//    AuthenticationController authenticationController;
 
     @Autowired
     ObjectMapper mapper;
-
+    @Autowired
     MockMvc mockMvc;
 
     private String userToken;
@@ -42,7 +46,9 @@ public class TransferControllerTest {
     @Before
     public void setUp() throws Exception {
         System.out.println("setup()...");
-        mockMvc = MockMvcBuilders.standaloneSetup(transferController, authenticationController).build();
+        SecurityContextHolder.clearContext();
+//        mockMvc = MockMvcBuilders.standaloneSetup(transferController, authenticationController).build();
+
     }
     @Before
     public void createUsers() throws Exception {

@@ -70,6 +70,8 @@ VALUES ('bob', '$2a$10$ZO4waJUrDU8vgYJ/6.95jeluZ.OZRre9DKNovzZq2J.wVDIPjDfOW'),
 INSERT INTO account (user_id) VALUES (1001);
 INSERT INTO account (user_id) VALUES (1002);
 
+INSERT INTO user_friends (user_id_request, user_id_receive, approved) VALUES (1001, 1002, true);
+
 INSERT INTO transfer (user_transfer_to, user_transfer_from, transfer_amount, is_pending, is_approved)
 VALUES ('bob', 'user', 100, false, true),
        ('user', 'bob', 100, true, false);

@@ -9,7 +9,7 @@ import java.math.BigDecimal;
 import java.security.Principal;
 
 public class TransferBusinessLogic {
-    @Autowired
+
     AccountDao accountDao;
 
     public boolean isToSameAccount(Principal principal, Transfer transfer){
