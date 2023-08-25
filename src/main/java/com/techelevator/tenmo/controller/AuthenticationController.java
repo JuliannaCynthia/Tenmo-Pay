@@ -2,6 +2,7 @@ package com.techelevator.tenmo.controller;
 
 import javax.validation.Valid;
 
+import com.techelevator.tenmo.model.Logger;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -20,11 +21,16 @@ import com.techelevator.tenmo.model.User;
 import com.techelevator.tenmo.security.jwt.TokenProvider;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.io.File;
+
 /**
  * Controller to authenticate users.
  */
 @RestController
 public class AuthenticationController {
+
+    File file = new File("authenticationlogs.txt");
+    Logger log = new Logger(file);
 
     private final TokenProvider tokenProvider;
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
@@ -47,7 +53,7 @@ public class AuthenticationController {
         String jwt = tokenProvider.createToken(authentication, false);
         
         User user = userDao.findByUsername(loginDto.getUsername());
-
+        log.write("New login from user -> "+ user.getUsername());
         return new LoginResponse(jwt, user);
     }
 
@@ -55,8 +61,10 @@ public class AuthenticationController {
     @RequestMapping(value = "/register", method = RequestMethod.POST)
     public void register(@Valid @RequestBody RegisterUserDTO newUser) {
         if (!userDao.create(newUser.getUsername(), newUser.getPassword())) {
+            log.write("Error registering a new user. Error message -> (User registration failed.)");
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "User registration failed.");
         }
+        log.write("New user registered. New user -> "+ newUser.getUsername());
     }
 
 

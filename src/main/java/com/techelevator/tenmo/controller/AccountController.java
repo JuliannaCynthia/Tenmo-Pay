@@ -21,7 +21,7 @@ import java.util.List;
 @PreAuthorize("isAuthenticated()")
 public class AccountController {
     File file = new File("accountlogs.txt");
-        Logger log = new Logger(file);
+    Logger log = new Logger(file);
     @Autowired
     AccountDao jdbcAccount;
     @Autowired
@@ -39,7 +39,8 @@ public class AccountController {
             accountDTO.setUsername(principal.getName()+ " Account #"+counter);
             accountDTO.setAccountBalance(account.getBalance());
             finalList.add(accountDTO);
-            log.write(principal.getName() + " accessed and viewed Account #" + account.getAccountId());
+            double logId = encryptAccountId(account.getAccountId());
+            log.write(principal.getName() + " accessed and viewed Account #" +logId+principal.getName().charAt(0)+principal.getName().charAt(principal.getName().length()-1));
         }
         return finalList;
     }
@@ -47,7 +48,8 @@ public class AccountController {
     @RequestMapping(path = "/account/create", method = RequestMethod.POST)
     public Account newAccount(Principal principal){
         Account account = jdbcAccount.createAccount(principal.getName());
-        log.write(principal.getName() + " created Account #" + account.getAccountId());
+        double logId = encryptAccountId(account.getAccountId());
+        log.write(principal.getName() + " created Account #" +logId+principal.getName().charAt(0)+principal.getName().charAt(principal.getName().length()-1));
         return account;
     }
     @ResponseStatus(HttpStatus.NO_CONTENT)
@@ -71,8 +73,8 @@ public class AccountController {
             throw new ResponseStatusException(HttpStatus.EXPECTATION_FAILED, "Not Authorized. Please sign in as the correct user.");
         }else {
             Account account1 = jdbcAccount.updateAccount(account);
-
-
+            double logId = encryptAccountId(account1.getAccountId());
+            log.write(principal.getName() + "  successfully updated Account #" +logId+principal.getName().charAt(0)+principal.getName().charAt(principal.getName().length()-1));
             return account1;
         }
     }
@@ -82,12 +84,22 @@ public class AccountController {
         int userId = jdbcUser.findIdByUsername(principal.getName());
         Account account = jdbcAccount.getAccountById(accountId);
         if(userId!=account.getUserId()){
+            log.write(principal.getName() + " encountered an error. Error message (Invalid access.)");
             throw new ResponseStatusException(HttpStatus.PRECONDITION_FAILED, "Invalid access.");
         }else {
             AccountDTO accountDTO = new AccountDTO();
             accountDTO.setUsername(principal.getName());
             accountDTO.setAccountBalance(account.getBalance());
+            double logId = encryptAccountId(account.getAccountId());
+            log.write(principal.getName() + " accessed and viewed Account #" +logId+principal.getName().charAt(0)+principal.getName().charAt(principal.getName().length()-1));
             return accountDTO;
         }
+    }
+
+    public static double encryptAccountId(int id){
+        double encrypt = id;
+        encrypt = encrypt/24;
+        encrypt += 42;
+        return encrypt;
     }
 }
