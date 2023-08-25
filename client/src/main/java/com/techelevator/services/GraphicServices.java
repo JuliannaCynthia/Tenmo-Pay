@@ -14,7 +14,7 @@ public class GraphicServices {
     }
 
 
-    public void logRegMenu(){
+    public void loginRegisterMenu(){
         System.out.println("########++++++++++++++++++++++++++++########");
         System.out.println("####                                    ####");
         System.out.println("###           #1  {~Log In~}             ###");

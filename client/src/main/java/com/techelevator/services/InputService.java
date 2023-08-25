@@ -4,20 +4,14 @@ import com.techelevator.model.LoginDTO;
 
 import java.util.Scanner;
 
-public class ConsoleService {
+public class inputService {
     GraphicServices graphicServices;
     private Scanner scanner;
 
-    public ConsoleService(){
+    public inputService(){
         this.scanner = new Scanner(System.in);
         this.graphicServices = new GraphicServices();
     }
-
-    public String printMainMenu(){
-       graphicServices.logRegMenu();
-       return promptForMenuSelection();
-    }
-
 
 
     public LoginDTO promptForCredentials(){
