@@ -14,7 +14,6 @@ import static org.junit.Assert.*;
 public class JdbcFriendsDaoTest extends  BaseDaoTests {
     private FriendsDao sut;
     private UserDao userDao;
-    JdbcTemplate template;
     private final Friends FRIEND_ONE = new Friends("Test1", "Test2", true);
     private final Friends FRIEND_TWO = new Friends("bub", "Test2", true);
     private final Friends FRIEND_THREE = new Friends("Test1", "bub", false);
@@ -44,7 +43,7 @@ public class JdbcFriendsDaoTest extends  BaseDaoTests {
 
     @Test
     public void addFriend() {
-        int test = sut.addFriend("bob", "user");
+        int test = sut.addFriend("bub", "user");
         assertEquals(1, test);
     }
 
