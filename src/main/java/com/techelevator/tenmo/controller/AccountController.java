@@ -39,7 +39,7 @@ public class AccountController {
         return finalList;
     }
     @ResponseStatus(HttpStatus.CREATED)
-    @RequestMapping(path = "/account", method = RequestMethod.POST)
+    @RequestMapping(path = "/account/create", method = RequestMethod.POST)
     public Account newAccount(Principal principal){
         return jdbcAccount.createAccount(principal.getName());
     }
