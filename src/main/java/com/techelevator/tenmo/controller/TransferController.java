@@ -34,7 +34,7 @@ public class TransferController {
     @ResponseStatus(HttpStatus.CREATED)
     @RequestMapping(value = "", method = RequestMethod.POST)
     public Transfer createTransfer(Principal principal, @Valid @RequestBody Transfer transfer) {
-        if(transferDao.transferCredentialsAreNotFriends(transfer)){
+        if(!transferDao.transferCredentialsAreNotFriends(transfer)){
             throw new ResponseStatusException(HttpStatus.PRECONDITION_FAILED, "You must be friends to send a transfer.");
         }
 
