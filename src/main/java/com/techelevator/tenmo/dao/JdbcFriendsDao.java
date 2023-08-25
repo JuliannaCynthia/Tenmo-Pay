@@ -33,7 +33,7 @@ public class JdbcFriendsDao implements FriendsDao{
     public List<FriendsDTO> getAcceptedFriends(String userName) {
         List<FriendsDTO> friendsDTOS;
         String usernameGet = "select username from tenmo_user where user_id = ?;";
-        String checkSql = "select user_id_request,user_id_receive from from user_friends where user_id_request = ? or user_id_receive = ? and approved = true;";
+        String checkSql = "select user_id_request,user_id_receive from user_friends where user_id_request = ? or user_id_receive = ? and approved = true;";
         try{
             friendsDTOS = new ArrayList<>();
             int userId = userDao.findIdByUsername(userName);
@@ -43,10 +43,14 @@ public class JdbcFriendsDao implements FriendsDao{
                 int receive = rowSet.getInt("user_id_receive");
                 if(userId==request){
                     SqlRowSet name = jdbcTemplate.queryForRowSet(usernameGet, receive);
-                    friendsDTOS.add(mapToFriendsDto(name));
+                    if(name.next()) {
+                        friendsDTOS.add(mapToFriendsDto(name));
+                    }
                 }else if(userId==receive){
                     SqlRowSet name = jdbcTemplate.queryForRowSet(usernameGet, request);
-                    friendsDTOS.add(mapToFriendsDto(name));
+                    if(name.next()) {
+                        friendsDTOS.add(mapToFriendsDto(name));
+                    }
                 }else{
                     throw new ResponseStatusException(HttpStatus.CONFLICT, "Error. Not valid user.");
                 }

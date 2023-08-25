@@ -12,6 +12,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import javax.validation.Valid;
 import java.security.Principal;
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -24,8 +25,18 @@ public class AccountController {
 
 
     @RequestMapping(path = "/account", method = RequestMethod.GET)
-    public List<Account> getAccount(Principal principal){
-        return jdbcAccount.getAccountsByUser(principal.getName());
+    public List<AccountDTO> getAccount(Principal principal){
+        List<AccountDTO> finalList = new ArrayList<>();
+        List<Account> prelist = jdbcAccount.getAccountsByUser(principal.getName());
+        int counter=0;
+        for(Account account: prelist){
+            counter++;
+            AccountDTO accountDTO = new AccountDTO();
+            accountDTO.setUsername(principal.getName()+ " Account #"+counter);
+            accountDTO.setAccountBalance(account.getBalance());
+            finalList.add(accountDTO);
+        }
+        return finalList;
     }
     @ResponseStatus(HttpStatus.CREATED)
     @RequestMapping(path = "/account", method = RequestMethod.POST)
@@ -55,12 +66,15 @@ public class AccountController {
 
     @RequestMapping(path = "/account/{accountId}", method = RequestMethod.GET)
     public AccountDTO getAccountById(Principal principal, @PathVariable int accountId){
+        int userId = jdbcUser.findIdByUsername(principal.getName());
         Account account = jdbcAccount.getAccountById(accountId);
-        AccountDTO accountDTO = new AccountDTO();
-        accountDTO.setUsername(principal.getName());
-        accountDTO.setAccountBalance(account.getBalance());
-        return accountDTO;
+        if(userId!=account.getUserId()){
+            throw new ResponseStatusException(HttpStatus.PRECONDITION_FAILED, "Invalid access.");
+        }else {
+            AccountDTO accountDTO = new AccountDTO();
+            accountDTO.setUsername(principal.getName());
+            accountDTO.setAccountBalance(account.getBalance());
+            return accountDTO;
+        }
     }
-
-
 }
