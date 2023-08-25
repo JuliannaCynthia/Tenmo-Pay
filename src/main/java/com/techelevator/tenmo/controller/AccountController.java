@@ -24,7 +24,7 @@ public class AccountController {
     UserDao jdbcUser;
 
 
-    @RequestMapping(path = "/account", method = RequestMethod.GET)
+    @RequestMapping(path = "/account/all", method = RequestMethod.GET)
     public List<AccountDTO> getAccount(Principal principal){
         List<AccountDTO> finalList = new ArrayList<>();
         List<Account> prelist = jdbcAccount.getAccountsByUser(principal.getName());
@@ -64,8 +64,8 @@ public class AccountController {
         }
     }
 
-    @RequestMapping(path = "/account/{accountId}", method = RequestMethod.GET)
-    public AccountDTO getAccountById(Principal principal, @PathVariable int accountId){
+    @RequestMapping(path = "/account", method = RequestMethod.POST)
+    public AccountDTO getAccountById(Principal principal, @RequestBody int accountId){
         int userId = jdbcUser.findIdByUsername(principal.getName());
         Account account = jdbcAccount.getAccountById(accountId);
         if(userId!=account.getUserId()){
