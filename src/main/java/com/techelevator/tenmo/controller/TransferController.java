@@ -38,7 +38,7 @@ public class TransferController {
         if (!transferDao.transferCredentialsAreNotFriends(transfer)) {
             throw new ResponseStatusException(HttpStatus.PRECONDITION_FAILED, "You must be friends to send a transfer.");
         }
-        if (businessLogic.isCreaterSender(principal, transfer) && businessLogic.senderHasEnoughMoney(transfer) && !businessLogic.isToSameAccount(principal, transfer)) {
+        if (businessLogic.isCreatorSender(principal, transfer) && businessLogic.senderHasEnoughMoney(transfer) && !businessLogic.isToSameAccount(principal, transfer)) {
             transfer.setApproved(true);
             transfer.setPending(false);
             Account sendingAccount = accountDao.getAccountById(transfer.getAccountNumberFrom());

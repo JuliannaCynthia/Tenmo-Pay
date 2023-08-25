@@ -9,14 +9,13 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.math.BigDecimal;
 
@@ -46,7 +45,7 @@ public class TransferControllerTest {
     @Before
     public void setUp() throws Exception {
         System.out.println("setup()...");
-        SecurityContextHolder.clearContext();
+//        SecurityContextHolder.setContext();
 //        mockMvc = MockMvcBuilders.standaloneSetup(transferController, authenticationController).build();
 
     }
@@ -64,36 +63,27 @@ public class TransferControllerTest {
         newTransfer.setTransferAmount(new BigDecimal("100.00"));
 
 
-
-
         mockMvc.perform(post("/transfer")
                 .contentType(MediaType.APPLICATION_JSON)
                 .header("Authorization", "Bearer " + bobToken)
                 .content(transferToJson(newTransfer)))
                 .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.transfer_id").value(3003))
-                .andExpect(jsonPath("$.is_pending").value(true))
-                .andExpect(jsonPath("$.is_approved").value(false));
+                .andExpect(jsonPath("$.transferId").value(3003))
+                .andExpect(jsonPath("$.isPending").value(true))
+                .andExpect(jsonPath("$.isApproved").value(false));
 
 
     }
 
     @Test
     public void respondToTransferRequest_should_return_transfer_pending_equals_false_and_approved_true() throws Exception {
-        String content = mockMvc.perform(get("/transfer/history/3002")
-                .contentType(MediaType.APPLICATION_JSON)
-                .header("Authorization", "Bearer " + bobToken))
-                .andReturn()
-                .getResponse()
-                .getContentAsString();
-
-        Transfer transferToApprove = mapper.readValue(content, Transfer.class);
-        transferToApprove.setApproved(true);
+        Transfer transfer = new Transfer(3002, new BigDecimal("100.00"), "bob", 1001, "user", false, true );
+        transfer.setAccountNumberTo(2002);
 
         mockMvc.perform(put("/transfer")
                 .contentType(MediaType.APPLICATION_JSON)
                 .header("Authorization", "Bearer " + bobToken)
-                .content(transferToJson(transferToApprove)))
+                .content(transferToJson(transfer)))
                 .andExpect(status().isOk());
 
     }
@@ -111,7 +101,7 @@ public class TransferControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .header("Authorization", "Bearer " + bobToken))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.transfer_id").value(3001));
+                .andExpect(jsonPath("$.transferId").value(3001));
 
 
     }

@@ -45,6 +45,7 @@ public class Transfer {
         this.transferId = transferId;
         this.transferAmount = transferAmount;
         this.transferFromUsername = transferFromUsername;
+        this.accountNumberFrom = accountNumberFrom;
         this.transferToUsername = transferToUsername;
         this.isPending = isPending;
         this.isApproved = isApproved;

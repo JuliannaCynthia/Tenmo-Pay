@@ -48,7 +48,7 @@ public class TransferBusinessLogic {
         return principal.getName().equals(transfer.getTransferFromUsername());
     }
 
-    public boolean isCreaterSender(Principal principal, Transfer transfer){
+    public boolean isCreatorSender(Principal principal, Transfer transfer){
         return principal.getName().equals(transfer.getTransferFromUsername());
     }
 
