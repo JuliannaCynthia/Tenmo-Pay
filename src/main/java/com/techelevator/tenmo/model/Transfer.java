@@ -8,33 +8,33 @@ import javax.validation.constraints.NotBlank;
 import java.math.BigDecimal;
 
 public class Transfer {
-    @JsonProperty("transfer_id")
+    @JsonProperty("transferId")
     private int transferId;
 
     @DecimalMin(value = "0.00", inclusive = false)
     @Digits(integer = 12, fraction = 2)
-    @JsonProperty("transfer_amount")
+    @JsonProperty("transferAmount")
     private BigDecimal transferAmount;
 
     @NotBlank
-    @JsonProperty("user_transfer_from")
+    @JsonProperty("userTransferFrom")
     private String transferFromUsername;
 
 
-    @JsonProperty("account_number_from")
+    @JsonProperty("accountNumberFrom")
     private int accountNumberFrom;
 
     @NotBlank
-    @JsonProperty("user_transfer_to")
+    @JsonProperty("userTransferTo")
     private String transferToUsername;
 
-    @JsonProperty("account_number_to")
+    @JsonProperty("accountNumberTo")
     private int accountNumberTo;
 
-    @JsonProperty("is_pending")
+    @JsonProperty("isPending")
     private boolean isPending = true;
 
-    @JsonProperty("is_approved")
+    @JsonProperty("isApproved")
     private boolean isApproved = false;
 
 

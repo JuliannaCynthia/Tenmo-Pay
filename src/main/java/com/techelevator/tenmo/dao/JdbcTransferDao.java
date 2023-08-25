@@ -155,6 +155,7 @@ public class JdbcTransferDao implements TransferDao{
         transfer.setTransferAmount(rowSet.getBigDecimal("transfer_amount"));
         transfer.setTransferToUsername(rowSet.getString("user_transfer_to"));
         transfer.setTransferFromUsername(rowSet.getString("user_transfer_from"));
+
         transfer.setPending(rowSet.getBoolean("is_pending"));
         transfer.setApproved(rowSet.getBoolean("is_approved"));
 

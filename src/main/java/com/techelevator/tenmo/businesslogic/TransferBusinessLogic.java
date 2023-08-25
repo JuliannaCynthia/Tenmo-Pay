@@ -3,7 +3,6 @@ package com.techelevator.tenmo.businesslogic;
 import com.techelevator.tenmo.dao.AccountDao;
 import com.techelevator.tenmo.model.Account;
 import com.techelevator.tenmo.model.Transfer;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.math.BigDecimal;
 import java.security.Principal;
@@ -11,6 +10,9 @@ import java.security.Principal;
 public class TransferBusinessLogic {
 
     AccountDao accountDao;
+    public TransferBusinessLogic(AccountDao accountDao){
+        this.accountDao = accountDao;
+    }
 
     public boolean isToSameAccount(Principal principal, Transfer transfer){
             String username = principal.getName();
@@ -42,6 +44,13 @@ public class TransferBusinessLogic {
         return account;
     }
 
+    public boolean isResponderSender(Principal principal, Transfer transfer){
+        return principal.getName().equals(transfer.getTransferFromUsername());
+    }
+
+    public boolean isCreaterSender(Principal principal, Transfer transfer){
+        return principal.getName().equals(transfer.getTransferFromUsername());
+    }
 
 
 
