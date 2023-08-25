@@ -2,6 +2,7 @@ package com.techelevator.tenmo.dao;
 
 import com.techelevator.tenmo.exceptions.DaoException;
 import com.techelevator.tenmo.model.Account;
+import com.techelevator.tenmo.model.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
@@ -11,13 +12,15 @@ import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Component;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.io.File;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
 @Component
 public class JdbcAccountDao implements AccountDao{
-
+    File file = new File("accountlogs.txt");
+    Logger log = new Logger(file);
     private JdbcTemplate jdbcTemplate;
     private UserDao userDao;
 
@@ -38,6 +41,7 @@ public class JdbcAccountDao implements AccountDao{
                 accounts.add(mapRowToAccount(results));
             }
         }catch(CannotGetJdbcConnectionException | DataIntegrityViolationException e){
+            log.write(username + " encountered an Error. Data Error or Connection Error.");
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
         }
         return accounts;
@@ -53,6 +57,7 @@ public class JdbcAccountDao implements AccountDao{
                 account= mapRowToAccount(rowSet);
             }
         }catch (CannotGetJdbcConnectionException | DataIntegrityViolationException e){
+            log.write("Encountered an Error. Data Error or Connection Error.");
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
         }
         return account;
@@ -69,6 +74,7 @@ public class JdbcAccountDao implements AccountDao{
             accountId =jdbcTemplate.queryForObject(sqlInsert,int.class,userId,n);
 
         }catch (CannotGetJdbcConnectionException | DataIntegrityViolationException e){
+            log.write(username + " encountered an Error. Data Error or Connection Error.");
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
         }
         return getAccountById(accountId);
@@ -82,9 +88,11 @@ public class JdbcAccountDao implements AccountDao{
             rowsAffected = jdbcTemplate.update(sql,account.getAccountId(),account.getUserId(),account.getBalance(),account.getAccountId());
             System.out.println(rowsAffected);
             if(rowsAffected!=1){
+                log.write("Encountered an Error. Message -> (Not Found. No update performed)");
                 throw new ResponseStatusException(HttpStatus.EXPECTATION_FAILED);
             }
         }catch (CannotGetJdbcConnectionException | DataIntegrityViolationException e){
+            log.write("Encountered an Error. Data Error or Connection Error.");
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
         }
         return getAccountById(account.getAccountId());
@@ -97,10 +105,12 @@ public class JdbcAccountDao implements AccountDao{
         try{
            rows = jdbcTemplate.update(sql,account.getAccountId(),account.getUserId());
            if(rows!=1){
+               log.write("Encountered an Error. Message -> (Not Found. No update performed)");
                throw new ResponseStatusException(HttpStatus.PRECONDITION_FAILED);
            }
            return rows;
         }catch (CannotGetJdbcConnectionException | DataIntegrityViolationException e){
+            log.write("Encountered an Error. Data Error or Connection Error.");
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }
     }

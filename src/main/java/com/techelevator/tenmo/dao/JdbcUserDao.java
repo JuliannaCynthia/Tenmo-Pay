@@ -1,5 +1,6 @@
 package com.techelevator.tenmo.dao;
 
+import com.techelevator.tenmo.model.Logger;
 import com.techelevator.tenmo.model.User;
 import org.springframework.dao.DataAccessException;
 import org.springframework.http.HttpStatus;
@@ -10,13 +11,17 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.io.File;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
 @Component
 public class JdbcUserDao implements UserDao {
-
+    File fileACT = new File("accountlogs.txt");
+    Logger logACT = new Logger(fileACT);
+    File file = new File("authenticationlogs.txt");
+    Logger log = new Logger(file);
     private JdbcTemplate jdbcTemplate;
 
     public JdbcUserDao(JdbcTemplate jdbcTemplate) {
@@ -65,6 +70,7 @@ public class JdbcUserDao implements UserDao {
         Integer newUserId;
         try {
             newUserId = jdbcTemplate.queryForObject(sql, Integer.class, username, password_hash);
+            log.write("New user created, username -> " + username);
         } catch (DataAccessException e) {
             return false;
         }
@@ -72,7 +78,9 @@ public class JdbcUserDao implements UserDao {
         try{
             BigDecimal decimal = new BigDecimal("1000.00");
             jdbcTemplate.update(sqlInsert,newUserId,decimal);
+            logACT.write("New account created, associated user -> " + username);
         }catch (DataAccessException e) {
+            logACT.write("Encountered an Error creating User.");
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
         }
         return true;
