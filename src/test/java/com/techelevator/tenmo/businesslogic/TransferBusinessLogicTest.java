@@ -1,5 +1,7 @@
 package com.techelevator.tenmo.businesslogic;
 
+import com.techelevator.tenmo.dao.AccountDao;
+import com.techelevator.tenmo.dao.JdbcAccountDao;
 import com.techelevator.tenmo.model.Transfer;
 import org.junit.Before;
 import org.junit.Test;
@@ -11,13 +13,15 @@ import java.security.Principal;
 import static org.junit.Assert.*;
 
 public class TransferBusinessLogicTest {
+    @Autowired
+    AccountDao accountDao;
 
     TransferBusinessLogic businessLogic;
     Principal principal;
     Transfer transfer;
     @Before
     public void setUp() {
-        businessLogic = new TransferBusinessLogic();
+        businessLogic = new TransferBusinessLogic(accountDao);
         principal = new Principal() {
 
             @Override
