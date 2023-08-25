@@ -1,6 +1,7 @@
 package com.techelevator.tenmo.dao;
 
 import com.techelevator.tenmo.exceptions.DaoException;
+import com.techelevator.tenmo.model.Logger;
 import com.techelevator.tenmo.model.Transfer;
 import com.techelevator.tenmo.model.TransferDTO;
 import org.springframework.dao.DataAccessException;
@@ -12,11 +13,13 @@ import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Component;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 @Component
 public class JdbcTransferDao implements TransferDao{
-
+    File file = new File("transferlogs.txt");
+    Logger log = new Logger(file);
     UserDao userDao;
     private JdbcTemplate jdbcTemplate;
     private final String SELECT_TRANSFER_BASE_SQL = "SELECT transfer_id, user_transfer_to, user_transfer_from, transfer_amount, is_pending, is_approved " +
@@ -37,6 +40,7 @@ public class JdbcTransferDao implements TransferDao{
                 transfer = mapRowSetToTransfer(result);
             }
         } catch (DataAccessException e){
+            log.write("Encountered an Error. Data Error or Connection Error.");
             throw new DaoException(e.getMessage(), e);
         }
         return transfer;
@@ -59,6 +63,7 @@ public class JdbcTransferDao implements TransferDao{
             createdTransfer = getTransferById(newTransferId);
 
         } catch (DataAccessException e) {
+            log.write("Encountered an Error. Data Error or Connection Error.");
             throw new DaoException(e.getMessage(), e);
         }
         return createdTransfer;
@@ -73,6 +78,7 @@ public class JdbcTransferDao implements TransferDao{
         try {
             rowsAffected = jdbcTemplate.update(sql, transfer.isApproved(), transfer.getTransferId());
         }  catch (DataAccessException e) {
+            log.write("Encountered an Error. Data Error or Connection Error.");
             throw new DaoException(e.getMessage(), e);
         }
         return rowsAffected;
@@ -99,8 +105,8 @@ public class JdbcTransferDao implements TransferDao{
                 while (results.next()) {
                     transferList.add(mapRowSetToTransferDTO(results));
                 }
-
         } catch (DataAccessException e){
+            log.write("Encountered an Error. Data Error or Connection Error.");
             throw new DaoException(e.getMessage(), e);
         }
         return transferList;
@@ -126,6 +132,7 @@ public class JdbcTransferDao implements TransferDao{
                 transferList.add(mapRowSetToTransferDTO(results));
             }
         } catch (DataAccessException e){
+            log.write("Encountered an Error. Data Error or Connection Error.");
             throw new DaoException(e.getMessage(), e);
         }
         return transferList;
@@ -144,6 +151,7 @@ public class JdbcTransferDao implements TransferDao{
                 transferList.add(mapRowSetToTransferDTO(results));
             }
         }catch (DataAccessException e){
+            log.write("Encountered an Error. Data Error or Connection Error.");
             throw new DaoException(e.getMessage(), e);
         }
         return transferList;
@@ -180,6 +188,7 @@ public class JdbcTransferDao implements TransferDao{
             SqlRowSet rowSet = jdbcTemplate.queryForRowSet(sql, sender, receiver, receiver, sender);
             return rowSet.next();
         } catch (CannotGetJdbcConnectionException | DataIntegrityViolationException e) {
+            log.write("Encountered an Error. Data Error or Connection Error.");
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
         }
     }

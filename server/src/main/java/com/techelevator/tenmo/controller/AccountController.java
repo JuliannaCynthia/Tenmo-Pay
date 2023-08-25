@@ -61,7 +61,8 @@ public class AccountController {
             throw new ResponseStatusException(HttpStatus.EXPECTATION_FAILED, "Not Authorized. Please sign in as the correct user.");
         }else {
             jdbcAccount.deleteAccount(account);
-            log.write(principal.getName() + " successfully deleted Account #" + account.getAccountId());
+            double logId = encryptAccountId(account.getAccountId());
+            log.write(principal.getName() + "  successfully deleted Account #" +logId+principal.getName().charAt(0)+principal.getName().charAt(principal.getName().length()-1));
         }
     }
 
