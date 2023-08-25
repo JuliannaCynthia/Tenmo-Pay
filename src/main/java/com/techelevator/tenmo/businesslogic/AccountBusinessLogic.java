@@ -6,13 +6,5 @@ import org.springframework.jdbc.core.JdbcTemplate;
 
 public class AccountBusinessLogic {
 
-    private UserDao userDao;
-    private JdbcTemplate jdbcTemplate;
-
-    public AccountBusinessLogic(JdbcTemplate jdbcTemplate) {
-        this.jdbcTemplate = jdbcTemplate;
-        userDao = new JdbcUserDao(jdbcTemplate);
-    }
-
 
 }

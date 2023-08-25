@@ -3,6 +3,7 @@ package com.techelevator.tenmo.businesslogic;
 import com.techelevator.tenmo.dao.JdbcUserDao;
 import com.techelevator.tenmo.dao.UserDao;
 import com.techelevator.tenmo.model.Friends;
+import com.techelevator.tenmo.model.Transfer;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.jdbc.CannotGetJdbcConnectionException;
@@ -47,7 +48,17 @@ public class FriendlyBusinessLogic {
     public boolean setToFalse(Friends friends){
         return !friends.isApproved();
     }
-
+    public boolean transferCredentialsAreFriends(Transfer transfer) {
+        int sender = userDao.findIdByUsername(transfer.getTransferFromUsername());
+        int receiver = userDao.findIdByUsername(transfer.getTransferToUsername());
+        String sql = "select * from user_friends where (user_id_request=? and user_id_receive=?) OR (user_id_request = ? and user_id_receive = ?);";
+        try {
+            SqlRowSet rowSet = jdbcTemplate.queryForRowSet(sql, sender, receiver, receiver, sender);
+            return rowSet.next();
+        } catch (CannotGetJdbcConnectionException | DataIntegrityViolationException e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+        }
+    }
 
 
 }

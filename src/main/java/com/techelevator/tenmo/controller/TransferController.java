@@ -1,14 +1,17 @@
 package com.techelevator.tenmo.controller;
 
 
+import com.techelevator.tenmo.businesslogic.FriendlyBusinessLogic;
 import com.techelevator.tenmo.businesslogic.TransferBusinessLogic;
 import com.techelevator.tenmo.dao.AccountDao;
+import com.techelevator.tenmo.dao.JdbcUserDao;
 import com.techelevator.tenmo.dao.TransferDao;
 import com.techelevator.tenmo.model.Account;
 import com.techelevator.tenmo.model.Transfer;
 import com.techelevator.tenmo.model.TransferDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
@@ -24,15 +27,16 @@ public class TransferController {
 
     @Autowired
     private TransferDao transferDao;
-
     @Autowired
     private AccountDao accountDao;
-
     private final TransferBusinessLogic businessLogic = new TransferBusinessLogic();
 
     @ResponseStatus(HttpStatus.CREATED)
     @RequestMapping(value = "", method = RequestMethod.POST)
     public Transfer createTransfer(Principal principal, @Valid @RequestBody Transfer transfer) {
+        if(transferDao.transferCredentialsAreNotFriends(transfer)){
+            throw new ResponseStatusException(HttpStatus.PRECONDITION_FAILED, "You must be friends to send a transfer.");
+        }
 
         if (!businessLogic.isToSameAccount(principal, transfer) && businessLogic.senderHasEnoughMoney(transfer)) {
             return transferDao.createTransfer(transfer);

@@ -23,6 +23,8 @@ public interface TransferDao {
     //GET transfer/pending
     List<TransferDTO> viewPendingTransfers(String username);
 
+    boolean transferCredentialsAreNotFriends(Transfer transfer);
+
 
 
 

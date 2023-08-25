@@ -4,20 +4,27 @@ import com.techelevator.tenmo.exceptions.DaoException;
 import com.techelevator.tenmo.model.Transfer;
 import com.techelevator.tenmo.model.TransferDTO;
 import org.springframework.dao.DataAccessException;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.http.HttpStatus;
+import org.springframework.jdbc.CannotGetJdbcConnectionException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Component;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.ArrayList;
 import java.util.List;
 @Component
 public class JdbcTransferDao implements TransferDao{
+
+    UserDao userDao;
     private JdbcTemplate jdbcTemplate;
     private final String SELECT_TRANSFER_BASE_SQL = "SELECT transfer_id, user_transfer_to, user_transfer_from, transfer_amount, is_pending, is_approved " +
             "FROM transfer ";
 
     public JdbcTransferDao(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
+        userDao = new JdbcUserDao(jdbcTemplate);
     }
 
     @Override
@@ -163,4 +170,17 @@ public class JdbcTransferDao implements TransferDao{
 
         return transferDTO;
     }
+
+    public boolean transferCredentialsAreNotFriends(Transfer transfer) {
+        int sender = userDao.findIdByUsername(transfer.getTransferFromUsername());
+        int receiver = userDao.findIdByUsername(transfer.getTransferToUsername());
+        String sql = "select * from user_friends where (user_id_request=? and user_id_receive=?) OR (user_id_request = ? and user_id_receive = ?);";
+        try {
+            SqlRowSet rowSet = jdbcTemplate.queryForRowSet(sql, sender, receiver, receiver, sender);
+            return rowSet.next();
+        } catch (CannotGetJdbcConnectionException | DataIntegrityViolationException e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+        }
+    }
+
 }
