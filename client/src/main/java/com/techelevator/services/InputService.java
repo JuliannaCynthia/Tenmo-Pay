@@ -4,11 +4,11 @@ import com.techelevator.model.LoginDTO;
 
 import java.util.Scanner;
 
-public class inputService {
+public class InputService {
     GraphicServices graphicServices;
     private Scanner scanner;
 
-    public inputService(){
+    public InputService(){
         this.scanner = new Scanner(System.in);
         this.graphicServices = new GraphicServices();
     }

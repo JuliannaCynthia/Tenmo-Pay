@@ -1,16 +1,16 @@
 package com.techelevator;
 
-import com.techelevator.services.inputService;
+import com.techelevator.services.InputService;
 import com.techelevator.services.GraphicServices;
 import com.techelevator.services.TenmoService;
 
 public class App {
-    private inputService inputService;
+    private InputService inputService;
     private GraphicServices graphicServices;
     private TenmoService tenmoService;
 
     public App(){
-        this.inputService = new inputService();
+        this.inputService = new InputService();
         this.graphicServices = new GraphicServices();
         this.tenmoService = new TenmoService();
     }
