@@ -4,6 +4,7 @@ package com.techelevator.tenmo.controller;
 import com.techelevator.tenmo.businesslogic.TransferBusinessLogic;
 import com.techelevator.tenmo.dao.*;
 import com.techelevator.tenmo.model.Account;
+import com.techelevator.tenmo.model.Logger;
 import com.techelevator.tenmo.model.Transfer;
 import com.techelevator.tenmo.model.TransferDTO;
 import org.springframework.http.HttpStatus;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import javax.validation.Valid;
+import java.io.File;
 import java.security.Principal;
 import java.util.List;
 
@@ -20,7 +22,8 @@ import java.util.List;
 @RequestMapping(value = "/transfer")
 @RestController
 public class TransferController {
-
+    File file = new File("transferlogs.txt");
+    Logger log = new Logger(file);
     private final TransferBusinessLogic businessLogic;
     private final AccountDao accountDao;
     private final TransferDao transferDao;
@@ -36,6 +39,7 @@ public class TransferController {
     @RequestMapping(value = "", method = RequestMethod.POST)
     public TransferDTO createTransfer(Principal principal, @Valid @RequestBody Transfer transfer) {
         if (!transferDao.transferCredentialsAreNotFriends(transfer)) {
+            log.write(principal.getName() + " encountered an Error. Message -> (You must be friends to send a transfer.)");
             throw new ResponseStatusException(HttpStatus.PRECONDITION_FAILED, "You must be friends to send a transfer.");
         }
         if (businessLogic.isCreaterSender(principal, transfer) && businessLogic.senderHasEnoughMoney(transfer) && !businessLogic.isToSameAccount(principal, transfer)) {
@@ -46,11 +50,14 @@ public class TransferController {
 
             transfer = transferDao.createTransfer(transfer);
             transferMoney(transfer, sendingAccount, receivingAccount);
+            log.write(principal.getName() + " sent a transfer request to -> "+ transfer.getTransferToUsername());
             return mapTransferToTransferDTO(transfer);
 
         } else if (!businessLogic.isToSameAccount(principal, transfer)) {
+            log.write(principal.getName() + " sent a transfer request to -> "+ transfer.getTransferFromUsername());
             return mapTransferToTransferDTO(transferDao.createTransfer(transfer));
         } else {
+            log.write(principal.getName() + " encountered an Error. Message -> (Cannot send to the same account)");
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
         }
     }
@@ -65,13 +72,15 @@ public class TransferController {
 
             if (isApproved && businessLogic.senderHasEnoughMoney(transfer)) {
                 if (transferDao.respondToTransferRequest(transfer) != 1) {
+                    log.write(principal.getName() + " encountered an Error. Message -> (Something went wrong, transfer was not updated.)");
                     throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Something went wrong, transfer was not updated");
                 }
+                log.write(principal.getName() + " accepted transfer.");
                 return transferMoney(transfer, sendingAccount, receivingAccount);
             }
         } else {
+            log.write(principal.getName() + " encountered an Error. Message -> (Only the sender may approve a transfer request.)");
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Only sending may approve a transfer request");
-
         }
         return false;
     }
@@ -83,18 +92,28 @@ public class TransferController {
 
         List<TransferDTO> transferList = transferDao.viewTransferFromHistory(principal.getName(), friendUsername);
         transferList.addAll(transferDao.viewTransferToHistory(principal.getName(), friendUsername));
-
+        for(TransferDTO transferDTO:transferList){
+            double ID = encryptId(transferDTO.getTransferId());
+            log.write(principal.getName() + " viewed transfer history, current Transfer #" + ID);
+        }
         return transferList;
     }
 
     @RequestMapping(value = "/history/{transferId}", method = RequestMethod.GET)
     public Transfer getTransferById(@PathVariable Integer transferId) {
+        double ID = encryptId(transferId);
+        log.write("User viewed pending Transfer #" + ID);
         return transferDao.getTransferById(transferId);
     }
 
     @RequestMapping(value = "/pending", method = RequestMethod.GET)
     public List<TransferDTO> viewPendingTransfers(Principal principal) {
-        return transferDao.viewPendingTransfers(principal.getName());
+        List<TransferDTO> view = transferDao.viewPendingTransfers(principal.getName());
+        for(TransferDTO transferDTO: view){
+           double ID = encryptId(transferDTO.getTransferId());
+           log.write(principal.getName() + " viewed pending Transfer #" + ID);
+        }
+        return view;
     }
 
     private TransferDTO mapTransferToTransferDTO(Transfer transfer) {
@@ -112,6 +131,13 @@ public class TransferController {
         accountDao.updateAccount(sendingAccount);
         accountDao.updateAccount(receivingAccount);
         return true;
+    }
+
+    public static double encryptId(int id){
+        double encrypt = id;
+        encrypt = encrypt/24;
+        encrypt += 42;
+        return encrypt;
     }
 
 }
