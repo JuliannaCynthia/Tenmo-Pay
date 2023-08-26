@@ -3,10 +3,7 @@ package com.techelevator.services;
 import com.techelevator.model.Account;
 import com.techelevator.model.AccountDTO;
 import com.techelevator.model.UserToken;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestClientResponseException;
 import org.springframework.web.client.RestTemplate;
@@ -48,17 +45,18 @@ public class AccountsService {
         return newAccount;
     }
 
-//    public Account getAccount(int accountNumber){
-//        Account account = null;
-//        HttpEntity<String> accountNumEntity = makeAccountEntity(accountNumber);
-//
-//        try {
-//            account = restTemplate.postForObject(TENMO_BASE_URL + "/account", accountNumEntity, Account.class );
-//        } catch (RestClientResponseException | ResourceAccessException e) {
-//            //TODO: add a logger here. log(e.getMessage)
-//        }
-//        return account;
-//    }
+    public Account getAccount(int accountNumber, int userId){
+        Account account = null;
+        HttpEntity<Account> accountHttpEntity = makeAccountEntity(accountNumber, userId);
+
+
+        try {
+            account = restTemplate.postForObject(TENMO_BASE_URL + "/account", accountHttpEntity, Account.class );
+        } catch (RestClientResponseException | ResourceAccessException e) {
+            //TODO: add a logger here. log(e.getMessage)
+        }
+        return account;
+    }
 
     public Account deleteAccount(){
         Account newAccount = null;
@@ -73,11 +71,15 @@ public class AccountsService {
     }
 
 
-    private HttpEntity<String> makeAccountEntity(int accountId){
-        String body = "{\"accountId\" : \"" + accountId + "\" }";
+    private HttpEntity<Account> makeAccountEntity(int accountId, int userId){
+        Account account = new Account();
+        account.setAccountId(accountId);
+        account.setUserId(userId);
+
         HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
         headers.setBearerAuth(userToken.getToken());
-        HttpEntity<String> accountNumEntity = new HttpEntity<>(body, headers);
+        HttpEntity<Account> accountNumEntity = new HttpEntity<>(account, headers);
         return accountNumEntity;
 
     }
