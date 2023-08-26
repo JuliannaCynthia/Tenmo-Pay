@@ -11,7 +11,7 @@ public class AccountDTO {
     @JsonProperty("balance")
     BigDecimal accountBalance;
 
-    public AccountDTO(){};
+    public AccountDTO(){}
 
     public String getUsername() {
         return username;

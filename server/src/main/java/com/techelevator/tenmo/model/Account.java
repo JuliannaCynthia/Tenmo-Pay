@@ -5,6 +5,7 @@ import javax.validation.constraints.NotBlank;
 import java.math.BigDecimal;
 
 public class Account {
+
     @Min(value = 2001, message = "Account cannot be registered with an invalid id.")
     private int accountId;
     @Min(value = 1001, message = "Account cannot be registered with an invalid id.")
@@ -43,5 +44,14 @@ public class Account {
 
     public void setBalance(BigDecimal balance) {
         this.balance = balance;
+    }
+
+    @Override
+    public String toString() {
+        return "Account{" +
+                "accountId=" + accountId +
+                ", userId=" + userId +
+                ", balance=" + balance +
+                '}';
     }
 }

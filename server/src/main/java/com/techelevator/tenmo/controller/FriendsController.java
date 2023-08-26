@@ -1,9 +1,9 @@
 package com.techelevator.tenmo.controller;
 
 import com.techelevator.tenmo.businesslogic.FriendlyBusinessLogic;
-import com.techelevator.tenmo.dao.AccountDao;
+
 import com.techelevator.tenmo.dao.FriendsDao;
-import com.techelevator.tenmo.dao.JdbcUserDao;
+
 import com.techelevator.tenmo.model.Friends;
 import com.techelevator.tenmo.model.FriendsDTO;
 import com.techelevator.tenmo.model.Logger;

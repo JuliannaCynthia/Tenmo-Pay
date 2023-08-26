@@ -1,6 +1,7 @@
 package com.techelevator.services;
 
 import com.techelevator.model.LoginDTO;
+import com.techelevator.model.RegisterUserDTO;
 
 import java.util.Scanner;
 
@@ -14,6 +15,13 @@ public class InputService {
 
     public LoginDTO promptForCredentials(){
         LoginDTO user = new LoginDTO();
+        user.setUsername(promptForUsername());
+        user.setPassword(promptForPassword());
+        return user;
+    }
+
+    public RegisterUserDTO promptForRegistration(){
+        RegisterUserDTO user = new RegisterUserDTO();
         user.setUsername(promptForUsername());
         user.setPassword(promptForPassword());
         return user;

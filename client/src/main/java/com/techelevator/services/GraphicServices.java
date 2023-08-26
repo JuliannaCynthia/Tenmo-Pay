@@ -22,5 +22,15 @@ public class GraphicServices {
         System.out.println("####                                    ####");
         System.out.println("########++++++++++++++++++++++++++++########\n\n");
     }
+        //TODO: add an option (0) exit
 
+    public void isRegistered(boolean isRegistered){
+        if(isRegistered){
+            System.out.println("Registration completed!");
+        } else {
+            System.out.println("Username already taken, please try again");
+        }
+    }
+
+    public void displayUserMenu(){}
 }
