@@ -18,7 +18,7 @@ public class App {
 
 
     private UserToken userToken;
-
+    private LoginDTO user;
 
     public App() {
         this.inputService = new InputService();
@@ -39,7 +39,7 @@ public class App {
         while (menuSelection != 0) {
             menuSelection = loginRegisterMenu();
             if(menuSelection == 1){
-                LoginDTO user = inputService.promptForCredentials();
+                user = inputService.promptForCredentials();
                 userToken = loginRegisterService.login(user);
 
 
@@ -75,7 +75,7 @@ public class App {
                 accountMenu.run();
             }
             if(menuSelection == 2){
-                FriendsMenu friendsMenu = new FriendsMenu(userToken);
+                FriendsMenu friendsMenu = new FriendsMenu(user.getUsername(), userToken, graphicServices, inputService);
                 friendsMenu.run();
             }
             if(menuSelection == 3) {
