@@ -1,5 +1,10 @@
 package com.techelevator.services;
 
+import com.techelevator.model.Account;
+import com.techelevator.model.AccountDTO;
+
+import java.util.List;
+
 public class GraphicServices {
 
 
@@ -33,4 +38,23 @@ public class GraphicServices {
     }
 
     public void displayUserMenu(){}
+
+    public void displayAccountMenu() {
+
+    }
+
+    public void displayUserAccounts(List<AccountDTO> userAccounts) {
+        System.out.println(userAccounts);
+    }
+
+    public void displayAccount(Account account) {
+    }
+
+    public void deleteMessage(boolean deleteSuccessful) {
+        if(deleteSuccessful){
+            System.out.println("Account deleted");
+        } else {
+            System.out.println("Account deletion failed");
+        }
+    }
 }

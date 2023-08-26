@@ -1,8 +1,10 @@
 package com.techelevator.services;
 
+import com.techelevator.model.Account;
 import com.techelevator.model.LoginDTO;
 import com.techelevator.model.RegisterUserDTO;
 
+import java.math.BigDecimal;
 import java.util.Scanner;
 
 public class InputService {
@@ -48,4 +50,55 @@ public class InputService {
         System.out.println("Please enter a password below: \n\n");
         return scanner.nextLine();
     }
+
+    public int promptForAccountId(){
+        int accountId = 0;
+        System.out.println("Please enter your accountId");
+        while(true) {
+            try {
+                accountId = Integer.parseInt(scanner.nextLine());
+                break;
+            } catch (NumberFormatException e) {
+                System.out.println("Invalid input: Please enter a number");
+            }
+        }
+        return accountId;
+    }
+
+    public Account promptForAccount() {
+        Account account = new Account();
+        account.setAccountId(promptForAccountId());
+        return account;
+    }
+
+    public BigDecimal promptForDepositAmount() {
+        System.out.println("How much money would you like to deposit?\n");
+        BigDecimal amount = BigDecimal.ZERO;
+        while (true) {
+            try {
+                String depositAmount = scanner.nextLine();
+                amount = new BigDecimal(depositAmount);
+                break;
+            } catch (NumberFormatException e) {
+                System.out.println("Invalid input: please enter a valid deposit in digits");
+            }
+        }
+        return amount;
+    }
+
+    public BigDecimal promptForWithdrawAmount() {
+        System.out.println("How much would you like to withdraw?\n");
+        BigDecimal amount = BigDecimal.ZERO;
+        while(true){
+            try {
+                String depositAmount = scanner.nextLine();
+                amount = new BigDecimal(depositAmount);
+                break;
+            } catch (NumberFormatException e) {
+                System.out.println("Invalid input: please enter a valid deposit in digits");
+            }
+        }
+        return amount;
+    }
+
 }

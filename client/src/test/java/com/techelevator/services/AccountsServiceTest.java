@@ -23,7 +23,9 @@ public class AccountsServiceTest {
     }
     @Test
     public void getUserAccounts() {
-        Account account = accountsService.getAccount(2001, 1001);
+        Account account = new Account();
+        account.setAccountId(2001);
+        account = accountsService.getAccount(account);
         BigDecimal expected = new BigDecimal("1000.00");
         assertEquals("Account balance should return 1000", expected, account.getBalance());
     }
