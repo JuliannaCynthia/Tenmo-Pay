@@ -2,6 +2,7 @@ package com.techelevator.services;
 
 import com.techelevator.model.Account;
 import com.techelevator.model.AccountDTO;
+import com.techelevator.model.FriendsDTO;
 
 import java.util.List;
 
@@ -56,5 +57,11 @@ public class GraphicServices {
         } else {
             System.out.println("Account deletion failed");
         }
+    }
+
+    public void displayFriendsMenu() {
+    }
+
+    public void displayFriends(List<FriendsDTO> friendsList) {
     }
 }

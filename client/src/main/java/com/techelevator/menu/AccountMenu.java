@@ -13,7 +13,7 @@ import java.util.List;
 public class AccountMenu {
 
     private final AccountsService accountsService;
-    private final List<AccountDTO> userAccounts;
+    private List<AccountDTO> userAccounts;
     private final GraphicServices graphicServices;
     private final InputService inputService;
 
@@ -34,6 +34,7 @@ public class AccountMenu {
 
              //display all accounts
             if(menuSelection == 1 ){
+                userAccounts = accountsService.getUserAccounts();
                 graphicServices.displayUserAccounts(userAccounts);
             }
 
