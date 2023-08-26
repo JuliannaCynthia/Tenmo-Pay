@@ -1,0 +1,2 @@
+08/25/2023 07:56:18 PM | Test2 added a Friend. Added user -> bob
+08/25/2023 07:57:11 PM | Test2 experienced an issue. Error message (One or more issues with your request. Please try again.)
