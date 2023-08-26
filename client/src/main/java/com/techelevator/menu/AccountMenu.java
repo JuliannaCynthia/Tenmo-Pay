@@ -48,6 +48,7 @@ public class AccountMenu {
             //create new account
             if(menuSelection == 3){
                 Account account = accountsService.createAccount();
+                System.out.println("Created account:");
                 graphicServices.displayAccount(account);
             }
 

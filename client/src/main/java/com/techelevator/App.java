@@ -41,7 +41,7 @@ public class App {
             if(menuSelection == 1){
                 user = inputService.promptForCredentials();
                 userToken = loginRegisterService.login(user);
-
+                userMenus();
 
             }
             if(menuSelection == 2){
@@ -79,7 +79,7 @@ public class App {
                 friendsMenu.run();
             }
             if(menuSelection == 3) {
-                TransferMenu transferMenu = new TransferMenu(userToken);
+                TransferMenu transferMenu = new TransferMenu(user.getUsername(), userToken, graphicServices, inputService);
                 transferMenu.run();
             }
 

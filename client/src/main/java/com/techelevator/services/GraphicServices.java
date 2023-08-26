@@ -3,6 +3,7 @@ package com.techelevator.services;
 import com.techelevator.model.Account;
 import com.techelevator.model.AccountDTO;
 import com.techelevator.model.FriendsDTO;
+import com.techelevator.model.TransferDTO;
 
 import java.util.List;
 
@@ -25,10 +26,11 @@ public class GraphicServices {
         System.out.println("####                                    ####");
         System.out.println("###           #1  {~Log In~}             ###");
         System.out.println("###           #2 {~Register~}            ###");
+        System.out.println("###           #0   {~Exit~}              ###");
         System.out.println("####                                    ####");
         System.out.println("########++++++++++++++++++++++++++++########\n\n");
     }
-        //TODO: add an option (0) exit
+
 
     public void isRegistered(boolean isRegistered){
         if(isRegistered){
@@ -63,5 +65,17 @@ public class GraphicServices {
     }
 
     public void displayFriends(List<FriendsDTO> friendsList) {
+    }
+
+    public void displayTransferMenu() {
+    }
+
+    public void displayTransfer(TransferDTO createdTransfer) {
+    }
+
+    public void requestSuccessful(boolean isSuccessful) {
+    }
+
+    public void displayTransfers(List<TransferDTO> transferHistory) {
     }
 }

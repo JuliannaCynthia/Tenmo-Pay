@@ -100,11 +100,11 @@ public class TransferController {
     }
 
     @RequestMapping(value = "/history/by_id", method = RequestMethod.POST)
-    public TransferDTO getTransferById(@RequestBody Transfer transfer) {
+    public Transfer getTransferById(@RequestBody Transfer transfer) {
         int transferId = transfer.getTransferId();
         double ID = encryptId(transferId);
         log.write("User viewed pending Transfer #" + ID);
-        return mapTransferToTransferDTO(transferDao.getTransferById(transferId));
+        return transferDao.getTransferById(transferId);
     }
 
     @RequestMapping(value = "/pending", method = RequestMethod.GET)

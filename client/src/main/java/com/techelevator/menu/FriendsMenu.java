@@ -19,7 +19,7 @@ public class FriendsMenu {
     public FriendsMenu(String username, UserToken userToken, GraphicServices graphicServices, InputService inputService){
         this.graphicServices = graphicServices;
         this.inputService = inputService;
-        friendService = new FriendService(userToken,username);
+        this.friendService = new FriendService(userToken,username);
         friendsList = friendService.getFriends();
     }
 

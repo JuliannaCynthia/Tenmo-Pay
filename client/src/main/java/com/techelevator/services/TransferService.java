@@ -75,10 +75,10 @@ public class TransferService {
         }
         return Arrays.stream(transferHistory).collect(Collectors.toList());
     }
-    public TransferDTO getTransferById(Transfer transfer){
-        TransferDTO transferInfo = null;
+    public Transfer getTransferById(Transfer transfer){
+        Transfer transferInfo = null;
         try {
-            transferInfo = restTemplate.postForObject(TRANSFER_BASE_URL + "by_id",  makeTransferEntity(transfer), TransferDTO.class);
+            transferInfo = restTemplate.postForObject(TRANSFER_BASE_URL + "by_id",  makeTransferEntity(transfer), Transfer.class);
 
         }catch (RestClientResponseException | ResourceAccessException e) {
             //TODO: add a logger here. log(e.getMessage)
