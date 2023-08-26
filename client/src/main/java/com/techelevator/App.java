@@ -71,7 +71,7 @@ public class App {
             menuSelection = inputService.promptForMenuSelection();
 
             if(menuSelection == 1){
-                AccountMenu accountMenu = new AccountMenu(userToken);
+                AccountMenu accountMenu = new AccountMenu(userToken, graphicServices, inputService);
                 accountMenu.run();
             }
             if(menuSelection == 2){

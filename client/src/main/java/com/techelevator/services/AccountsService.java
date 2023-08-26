@@ -14,7 +14,7 @@ import java.util.stream.Collectors;
 
 public class AccountsService {
 
-    public static String TENMO_BASE_URL = "http://localhost:8080";
+    public static String ACCOUNT_BASE_URL = "http://localhost:8080/account";
     private RestTemplate restTemplate = new RestTemplate();
     private UserToken userToken;
 
@@ -25,7 +25,7 @@ public class AccountsService {
     public List<AccountDTO> getUserAccounts() {
         AccountDTO[] userAccounts = null;
         try { ResponseEntity<AccountDTO[]> response =
-                restTemplate.exchange(TENMO_BASE_URL + "/account/all", HttpMethod.GET, makeAuthEntity(), AccountDTO[].class );
+                restTemplate.exchange(ACCOUNT_BASE_URL + "/all", HttpMethod.GET, makeAuthEntity(), AccountDTO[].class );
             userAccounts = response.getBody();
         } catch (RestClientResponseException | ResourceAccessException e) {
             //TODO: add a logger here. log(e.getMessage)
@@ -37,7 +37,7 @@ public class AccountsService {
         Account newAccount = null;
         try {
             ResponseEntity<Account> response =
-                    restTemplate.exchange(TENMO_BASE_URL + "/account/create", HttpMethod.POST, makeAuthEntity(), Account.class);
+                    restTemplate.exchange(ACCOUNT_BASE_URL + "/create", HttpMethod.POST, makeAuthEntity(), Account.class);
             newAccount = response.getBody();
         }catch (RestClientResponseException | ResourceAccessException e) {
             //TODO: add a logger here. log(e.getMessage)
@@ -45,36 +45,49 @@ public class AccountsService {
         return newAccount;
     }
 
-    public Account getAccount(int accountNumber, int userId){
-        Account account = null;
-        HttpEntity<Account> accountHttpEntity = makeAccountEntity(accountNumber, userId);
 
 
+    public Account getAccount(Account account){
+
+        HttpEntity<Account> accountHttpEntity = makeAccountEntity(account);
         try {
-            account = restTemplate.postForObject(TENMO_BASE_URL + "/account", accountHttpEntity, Account.class );
+            account = restTemplate.postForObject(ACCOUNT_BASE_URL , accountHttpEntity, Account.class );
         } catch (RestClientResponseException | ResourceAccessException e) {
+            System.out.println(e.getMessage());
             //TODO: add a logger here. log(e.getMessage)
         }
         return account;
     }
 
-    public Account deleteAccount(){
-        Account newAccount = null;
+    public boolean deleteAccount(Account account){
+        HttpEntity<Account> accountHttpEntity = makeAccountEntity(account);
+
+        boolean successful = false;
         try {
-            ResponseEntity<Account> response =
-                    restTemplate.exchange(TENMO_BASE_URL + "/account/create", HttpMethod.POST, makeAuthEntity(), Account.class);
-            newAccount = response.getBody();
+            restTemplate.exchange(ACCOUNT_BASE_URL + "/delete", HttpMethod.DELETE, accountHttpEntity, Void.class);
+            successful = true;
         }catch (RestClientResponseException | ResourceAccessException e) {
+            System.out.println(e.getMessage());
             //TODO: add a logger here. log(e.getMessage)
         }
-        return newAccount;
+        return successful;
+    }
+
+    public Account updateAccount(Account account){
+        HttpEntity<Account> accountHttpEntity = makeAccountEntity(account);
+
+        try{
+            ResponseEntity<Account> response = restTemplate.exchange(ACCOUNT_BASE_URL, HttpMethod.PUT, accountHttpEntity, Account.class);
+            account = response.getBody();
+        } catch (RestClientResponseException | ResourceAccessException e) {
+            System.out.println(e.getMessage());
+            //TODO: add a logger here. log(e.getMessage)
+        }
+        return account;
     }
 
 
-    private HttpEntity<Account> makeAccountEntity(int accountId, int userId){
-        Account account = new Account();
-        account.setAccountId(accountId);
-        account.setUserId(userId);
+    private HttpEntity<Account> makeAccountEntity(Account account){
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
