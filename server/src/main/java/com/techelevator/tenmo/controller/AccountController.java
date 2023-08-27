@@ -83,7 +83,7 @@ public class AccountController {
     }
 
     @RequestMapping(path = "/account", method = RequestMethod.POST)
-    public AccountDTO getAccountById(Principal principal, @RequestBody Account account) {
+    public AccountDTO getAccountById(Principal principal, @Valid @RequestBody Account account) {
         int userId = jdbcUser.findIdByUsername(principal.getName());
         account = jdbcAccount.getAccountById(account.getAccountId());
         if (userId != account.getUserId()) {

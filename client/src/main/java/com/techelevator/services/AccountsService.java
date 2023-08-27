@@ -15,8 +15,8 @@ import java.util.stream.Collectors;
 public class AccountsService {
 
     public static String ACCOUNT_BASE_URL = "http://localhost:8080/account";
-    private RestTemplate restTemplate = new RestTemplate();
-    private UserToken userToken;
+    private final RestTemplate restTemplate = new RestTemplate();
+    private final UserToken userToken;
 
     public AccountsService(UserToken userToken){
         this.userToken = userToken;
@@ -47,24 +47,26 @@ public class AccountsService {
 
 
 
-    public Account getAccount(Account account){
+    public AccountDTO getAccount(Account account){
 
         HttpEntity<Account> accountHttpEntity = makeAccountEntity(account);
+        AccountDTO returnedAccount = null;
         try {
-            account = restTemplate.postForObject(ACCOUNT_BASE_URL , accountHttpEntity, Account.class );
+            returnedAccount = restTemplate.postForObject(ACCOUNT_BASE_URL , accountHttpEntity, AccountDTO.class );
         } catch (RestClientResponseException | ResourceAccessException e) {
             System.out.println(e.getMessage());
             //TODO: add a logger here. log(e.getMessage)
         }
-        return account;
+        return returnedAccount;
     }
 
     public boolean deleteAccount(Account account){
+
         HttpEntity<Account> accountHttpEntity = makeAccountEntity(account);
 
         boolean successful = false;
         try {
-            restTemplate.exchange(ACCOUNT_BASE_URL + "/delete", HttpMethod.DELETE, accountHttpEntity, Void.class);
+            restTemplate.exchange(ACCOUNT_BASE_URL, HttpMethod.DELETE, accountHttpEntity, Void.class);
             successful = true;
         }catch (RestClientResponseException | ResourceAccessException e) {
             System.out.println(e.getMessage());
@@ -74,6 +76,7 @@ public class AccountsService {
     }
 
     public Account updateAccount(Account account){
+
         HttpEntity<Account> accountHttpEntity = makeAccountEntity(account);
 
         try{
@@ -88,7 +91,7 @@ public class AccountsService {
 
 
     private HttpEntity<Account> makeAccountEntity(Account account){
-
+        account.setUserId(userToken.getUserInfo().getId());
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.setBearerAuth(userToken.getToken());

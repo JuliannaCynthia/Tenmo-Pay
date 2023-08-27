@@ -52,8 +52,8 @@ public class GraphicServices {
         System.out.println("\n      ########++++++++++++++++++++++++++++########");
         System.out.println("      ####                                    ####");
         System.out.println("      ###           *0 {~Exit~}                ###");
-        System.out.println("      ###           *1 {~Friends~}             ###");
-        System.out.println("      ###           *2 {~Accounts~}            ###");
+        System.out.println("      ###           *1 {~Accounts~}            ###");
+        System.out.println("      ###           *2 {~Friends~}             ###");
         System.out.println("      ###           *3 {~Transfers~}           ###");
         System.out.println("      ####                                    ####");
         System.out.println("      ########++++++++++++++++++++++++++++########");
@@ -62,7 +62,7 @@ public class GraphicServices {
     public void displayAccountMenu() {
         System.out.println("\n      ########~*~*~*~*~*~*~*~*~*~*~*~*~*~*~########");
         System.out.println("      #####                                   #####");
-        System.out.println("      ####        *1 {~View All Accounts~}     ####");
+        System.out.println("      ####        *1 {~View All Accounts~}     ####"); //todo: make only user accounts able to be viewed
         System.out.println("      ###         *2 {~View An Account~}        ###");
         System.out.println("      ###         *3 {~Create A New Account~}   ###");
         System.out.println("      ###         *4 {~Delete An Account~}      ###");
@@ -95,6 +95,15 @@ public class GraphicServices {
         System.out.println("      #####                                   #####");
         System.out.println("      ####           {~Account #" + account.getAccountId() +"~}            ####");
         System.out.println("      ####           {~Balance $" + account.getBalance() +"~}            ####");
+        System.out.println("      #####                                   #####");
+        System.out.println("      ########~*~*~*~*~*~*~*~*~*~*~*~*~*~*~########");
+    }
+
+    public void displayAccount(AccountDTO account) {
+        System.out.println("\n      ########~*~*~*~*~*~*~*~*~*~*~*~*~*~*~########");
+        System.out.println("      #####                                   #####");
+        System.out.println("      ####           {~Username: " + account.getUsername() +"~}            ####");
+        System.out.println("      ####           {~Balance $" + account.getAccountBalance() +"~}            ####");
         System.out.println("      #####                                   #####");
         System.out.println("      ########~*~*~*~*~*~*~*~*~*~*~*~*~*~*~########");
     }

@@ -6,9 +6,9 @@ import java.math.BigDecimal;
 
 public class Account {
 
-    @Min(value = 2001, message = "Account cannot be registered with an invalid id.")
+    @Min(value = 2000, message = "Account cannot be registered with an invalid id.")
     private int accountId;
-    @Min(value = 1001, message = "Account cannot be registered with an invalid id.")
+    @Min(value = 1000, message = "Account cannot be registered with an invalid id.")
     private int userId;
 
     private BigDecimal balance = new BigDecimal("1000");

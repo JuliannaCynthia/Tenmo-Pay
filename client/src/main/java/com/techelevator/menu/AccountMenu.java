@@ -41,8 +41,8 @@ public class AccountMenu {
             //display account info
             if (menuSelection == 2) {
                 Account account = inputService.promptForAccount();
-                account = accountsService.getAccount(account);
-                graphicServices.displayAccount(account);
+                AccountDTO accountDTO = accountsService.getAccount(account);
+                graphicServices.displayAccount(accountDTO);
             }
 
             //create new account
@@ -55,7 +55,6 @@ public class AccountMenu {
             //delete account
             if(menuSelection == 4){
                 Account account = inputService.promptForAccount();
-
                 boolean deleteSuccessful = accountsService.deleteAccount(account);
                 graphicServices.deleteMessage(deleteSuccessful);
             }
@@ -63,8 +62,9 @@ public class AccountMenu {
             //deposit to account
             if(menuSelection == 5){
                 Account account = inputService.promptForAccount();
-                account = accountsService.getAccount(account);
-                graphicServices.displayAccount(account);
+                AccountDTO accountDTO = accountsService.getAccount(account);
+                account.setBalance(accountDTO.getAccountBalance());
+                graphicServices.displayAccount(accountDTO);
 
                 BigDecimal moneyToDeposit = inputService.promptForDepositAmount();
                 account.setBalance(account.getBalance().add(moneyToDeposit));
@@ -76,8 +76,9 @@ public class AccountMenu {
             //withdraw from account
             if(menuSelection == 6){
                 Account account = inputService.promptForAccount();
-                account = accountsService.getAccount(account);
-                graphicServices.displayAccount(account);
+                AccountDTO accountDTO = accountsService.getAccount(account);
+                account.setBalance(accountDTO.getAccountBalance());
+                graphicServices.displayAccount(accountDTO);
 
                 BigDecimal moneyToWithdraw = inputService.promptForWithdrawAmount();
                 if(moneyToWithdraw.compareTo(account.getBalance()) < 1){

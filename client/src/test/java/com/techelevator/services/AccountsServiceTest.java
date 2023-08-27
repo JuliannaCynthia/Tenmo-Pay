@@ -1,6 +1,7 @@
 package com.techelevator.services;
 
 import com.techelevator.model.Account;
+import com.techelevator.model.AccountDTO;
 import com.techelevator.model.UserToken;
 import org.junit.Before;
 import org.junit.Test;
@@ -23,11 +24,12 @@ public class AccountsServiceTest {
     }
     @Test
     public void getUserAccounts() {
+        AccountDTO returnedAccount = new AccountDTO();
         Account account = new Account();
         account.setAccountId(2001);
-        account = accountsService.getAccount(account);
+        returnedAccount = accountsService.getAccount(account);
         BigDecimal expected = new BigDecimal("1000.00");
-        assertEquals("Account balance should return 1000", expected, account.getBalance());
+        assertEquals("Account balance should return 1000", expected, returnedAccount.getAccountBalance());
     }
 
     @Test

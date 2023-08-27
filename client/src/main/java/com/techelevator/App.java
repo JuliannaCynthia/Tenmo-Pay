@@ -6,7 +6,6 @@ import com.techelevator.menu.TransferMenu;
 import com.techelevator.model.LoginDTO;
 import com.techelevator.model.RegisterUserDTO;
 import com.techelevator.model.UserToken;
-import com.techelevator.services.AccountsService;
 import com.techelevator.services.InputService;
 import com.techelevator.services.GraphicServices;
 import com.techelevator.services.LoginRegisterService;
@@ -41,8 +40,9 @@ public class App {
             if(menuSelection == 1){
                 user = inputService.promptForCredentials();
                 userToken = loginRegisterService.login(user);
-                userMenus();
-
+                if(userToken != null) {
+                    displayUserMenus();
+                }
             }
             if(menuSelection == 2){
                 RegisterUserDTO user = inputService.promptForRegistration();
@@ -64,7 +64,7 @@ public class App {
         }
     }
 
-    private void userMenus() {
+    private void displayUserMenus() {
         int menuSelection = -1;
         while (menuSelection != 0) {
             graphicServices.displayUserMenu();

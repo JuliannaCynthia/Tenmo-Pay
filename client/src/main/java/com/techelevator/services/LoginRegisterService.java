@@ -25,9 +25,10 @@ public class LoginRegisterService {
         UserToken userToken = null;
         try {
             userToken = restTemplate.postForObject(TENMO_BASE_URL + "/login", userHttpEntity, UserToken.class);
+
         } catch (RestClientResponseException e) {
             String errorMessage = "Returned status: " + e.getRawStatusCode() + "\n" +
-                    "Status message: " + e.getStatusText();
+                    "Status message: " + e.getMessage();
             System.out.println(errorMessage);
         } catch (ResourceAccessException e) {
             System.out.println(e.getMessage());
