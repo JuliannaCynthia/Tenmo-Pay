@@ -197,7 +197,6 @@ public class GraphicServices {
         System.out.println("\n      ########~*~*~*~*~*~*~*~*~*~*~*~*~*~*~########");
         System.out.println("      #####                                   #####");
         for(TransferDTO dto:transferHistory){
-            System.out.println("                    {~Archive #" + counter +"~}");
             System.out.println("                    {~Transfer #" + dto.getTransferId() +"~}");
             System.out.println("                    {~Amount $" + dto.getTransferAmount() +"~}");
             System.out.println("                    {~From #" + dto.getTransferFromUsername() +"~}");

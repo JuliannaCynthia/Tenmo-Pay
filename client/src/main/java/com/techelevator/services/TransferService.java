@@ -8,9 +8,11 @@ import org.springframework.http.*;
 import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestClientResponseException;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.math.BigDecimal;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -47,57 +49,70 @@ public class TransferService {
         return transferDTO;
     }
 
-    public boolean respondToTransfer(Transfer transfer){
+    public boolean respondToTransfer(Transfer transfer) {
         HttpEntity<Transfer> transferHttpEntity = makeTransferEntity(transfer);
         boolean isSuccessful = false;
         try {
             restTemplate.put(TRANSFER_BASE_URL, transferHttpEntity);
             isSuccessful = true;
-        }catch (RestClientResponseException | ResourceAccessException e) {
+        } catch (RestClientResponseException | ResourceAccessException e) {
             //TODO: add a logger here. log(e.getMessage)
         }
         return isSuccessful;
     }
 
-    public List<TransferDTO> viewTransferHistory(String friendUsername){
+    public List<TransferDTO> viewTransferHistory(String friendUsername) {
         TransferDTO[] transferHistory = null;
         String transferHistoryURL;
-        if(!friendUsername.isBlank()) {
-            transferHistoryURL = TRANSFER_BASE_URL + "?friendUsername=" + friendUsername;
+        if (!friendUsername.isBlank()) {
+            transferHistoryURL = TRANSFER_BASE_URL + "/history" + "?friendUsername=" + friendUsername;
         } else {
-            transferHistoryURL = TRANSFER_BASE_URL;
+            transferHistoryURL = TRANSFER_BASE_URL + "/history";
         }
         try {
             ResponseEntity<TransferDTO[]> response = restTemplate.exchange(transferHistoryURL, HttpMethod.GET, makeAuthEntity(), TransferDTO[].class);
             transferHistory = response.getBody();
-        }catch (RestClientResponseException | ResourceAccessException e) {
+            if (transferHistory == null) {
+                throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Friend '" + friendUsername + "' not found");
+            }
+        } catch (RestClientResponseException | ResourceAccessException e) {
             //TODO: add a logger here. log(e.getMessage)
+        } catch (ResponseStatusException e){
+            System.out.println(e.getStatus().getReasonPhrase() + "\n" + e.getMessage() );
+            transferHistory = new TransferDTO[1];
         }
-        return Arrays.stream(transferHistory).collect(Collectors.toList());
-    }
-    public Transfer getTransferById(Transfer transfer){
-        Transfer transferInfo = null;
-        try {
-            transferInfo = restTemplate.postForObject(TRANSFER_BASE_URL + "by_id",  makeTransferEntity(transfer), Transfer.class);
+        return Arrays.stream(transferHistory).sorted(Comparator.comparing(TransferDTO::getTransferId)).collect(Collectors.toList());
 
-        }catch (RestClientResponseException | ResourceAccessException e) {
+    }
+
+    public Transfer getTransferById(Transfer transfer) {
+        Transfer transferInfo = null;
+        HttpEntity<Transfer> transferHttpEntity = makeTransferEntity(transfer);
+        try {
+            transferInfo = restTemplate.postForObject(TRANSFER_BASE_URL + "/by_id", transferHttpEntity, Transfer.class);
+
+        } catch (RestClientResponseException | ResourceAccessException e) {
             //TODO: add a logger here. log(e.getMessage)
         }
         return transferInfo;
     }
 
-    public List<TransferDTO> getPendingTransfers(){
+    public List<TransferDTO> getPendingTransfers() {
         TransferDTO[] pendingTransfers = null;
-        try{
+        try {
             ResponseEntity<TransferDTO[]> response = restTemplate.exchange(TRANSFER_BASE_URL + "/pending", HttpMethod.GET, makeAuthEntity(), TransferDTO[].class);
             pendingTransfers = response.getBody();
-
-        }catch (RestClientResponseException | ResourceAccessException e) {
+            if(pendingTransfers == null){
+                throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No pending transfers found");
+            }
+        } catch (RestClientResponseException | ResourceAccessException e) {
             //TODO: add a logger here. log(e.getMessage)
+        } catch (ResponseStatusException e ){
+            System.out.println(e.getStatus().getReasonPhrase() + "\n" + e.getMessage());
+            pendingTransfers = new TransferDTO[1];
         }
-        return Arrays.stream(pendingTransfers).collect(Collectors.toList());
+        return Arrays.stream(pendingTransfers).sorted(Comparator.comparing(TransferDTO::getTransferId)).collect(Collectors.toList());
     }
-
 
 
     private HttpEntity<Transfer> makeTransferEntity(Transfer transfer) {

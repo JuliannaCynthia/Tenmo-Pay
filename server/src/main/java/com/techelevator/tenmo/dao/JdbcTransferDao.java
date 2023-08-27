@@ -92,7 +92,7 @@ public class JdbcTransferDao implements TransferDao{
 
         //checks if friendUserName was input as a requestParameter and adjust sql as necessary.
         if(transferToUserName != null){
-            sql = " AND user_transfer_to = ?;";
+            sql += " AND user_transfer_to = ?;";
         }
 
         try {
@@ -118,7 +118,7 @@ public class JdbcTransferDao implements TransferDao{
         String sql = SELECT_TRANSFER_BASE_SQL + "WHERE user_transfer_to = ?";
 
         if(transferFromUsername != null){
-            sql = " AND user_transfer_from = ?;";
+            sql += " AND user_transfer_from = ?;";
         }
 
         try {

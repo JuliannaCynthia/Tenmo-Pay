@@ -99,7 +99,7 @@ public class TransferController {
         return transferList;
     }
 
-    @RequestMapping(value = "/history/by_id", method = RequestMethod.POST)
+    @RequestMapping(value = "/by_id", method = RequestMethod.POST)
     public Transfer getTransferById(@RequestBody Transfer transfer) {
         int transferId = transfer.getTransferId();
         double ID = encryptId(transferId);

@@ -61,12 +61,19 @@ public class TransferMenu {
             //respond to transfer request
             if (menuSelection == 3) {
                 int transferId = inputService.promptForTransferId();
-                boolean approved = inputService.promptForTransferApproval();
                 Transfer transfer = new Transfer();
                 transfer.setTransferId(transferId);
-                transfer.setApproved(approved);
 
                 transfer = transferService.getTransferById(transfer);
+                TransferDTO transferDTO = new TransferDTO(transfer.getTransferId(), transfer.getTransferAmount(), transfer.getTransferFromUsername(), transfer.getTransferToUsername());
+                graphicServices.displayTransfer(transferDTO);
+
+                boolean approved = inputService.promptForTransferApproval();
+                if(approved){
+                    System.out.println("What account would you like to transfer from?");
+                    transfer.setAccountNumberFrom(inputService.promptForAccountId());
+                }
+                transfer.setApproved(approved);
                 boolean isSuccessful = transferService.respondToTransfer(transfer);
 
                 graphicServices.requestSuccessful(isSuccessful);
