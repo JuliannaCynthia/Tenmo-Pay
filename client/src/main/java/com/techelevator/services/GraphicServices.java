@@ -156,12 +156,12 @@ public class GraphicServices {
     public void displayTransferMenu() {
         System.out.println("\n      ########=+--==--++--==--++--==--++-=########");
         System.out.println("      #####                                  #####");
-        System.out.println("      ####       *1 {~View Friends~}          ####");
-        System.out.println("      ###        *2 {~Add A Friend~}           ###");
-        System.out.println("      ###        *3 {~View Pending Friends~}   ###");
-        System.out.println("      ###        *4 {~Approve Friend~}         ###");
-        System.out.println("      ###        *5 {~Deny Friend~}            ###");
-        System.out.println("      ###        *6 {~Remove Friend~}          ###");
+        System.out.println("      ####       *1 {~Send a transfer~}          ####");
+        System.out.println("      ###        *2 {~Request a transfer~}           ###");
+        System.out.println("      ###        *3 {~Respond to pending transfer~}   ###");
+        System.out.println("      ###        *4 {~View transfer history~}         ###");
+        System.out.println("      ###        *5 {~Search transfers by friend~}            ###");
+        System.out.println("      ###        *6 {~View pending transfers~}          ###");
         System.out.println("      ####       *0 {~Exit~}                  ####");
         System.out.println("      #####                                  #####");
         System.out.println("      ########=+--==--++--==--++--==--++-=########");
