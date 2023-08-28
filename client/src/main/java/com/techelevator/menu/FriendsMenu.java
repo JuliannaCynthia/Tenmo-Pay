@@ -40,11 +40,7 @@ public class FriendsMenu {
             if(menuSelection == 2){
                 String friendUsername = inputService.promptForUsername();
                 boolean requestSent = friendService.sendFriendRequest(friendUsername);
-                if(requestSent){
-                    System.out.println("Friend request sent!");
-                } else {
-                    System.out.println("Invalid request: please try again");
-                }
+                graphicServices.friendRequest(requestSent);
             }
 
             //view pending friend request
@@ -55,38 +51,26 @@ public class FriendsMenu {
 
             //approve friend request
             if(menuSelection == 4) {
-                System.out.println("Please enter a friend request to approve");
+                System.out.println("Please enter a friend request to approve:");
                 String friendUsername = inputService.promptForUsername();
                 boolean requestApproved = friendService.approveFriendRequest(friendUsername);
-                if (requestApproved){
-                    System.out.println("Request approved");
-                } else {
-                    System.out.println("Something went wrong, please try again");
-                }
+                graphicServices.friendApproval(requestApproved);
             }
 
             //deny friend request
             if(menuSelection == 5){
-                System.out.println("Please enter a friend request to deny");
+                System.out.println("Please enter a friend request to deny:");
                 String friendRequestUsername = inputService.promptForUsername();
                 boolean successful = friendService.denyFriendRequest(friendRequestUsername);
-                if(successful){
-                    System.out.println("Request denied");
-                } else {
-                    System.out.println("Something went wrong, please try again");
-                }
+                graphicServices.friendDenial(successful);
             }
 
             //remove friend
             if(menuSelection == 6){
-                System.out.println("Please enter a friend to remove");
+                System.out.println("Please enter a friend to remove:");
                 String friendUsername = inputService.promptForUsername();
                 boolean successful = friendService.denyFriendRequest(friendUsername);
-                if(successful){
-                    System.out.println("Friend removed");
-                } else {
-                    System.out.println("Something went wrong, please try again");
-                }
+               graphicServices.friendRemoval(successful);
             }
         }
     }

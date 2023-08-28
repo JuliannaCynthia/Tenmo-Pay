@@ -3,6 +3,7 @@ package com.techelevator;
 import com.techelevator.menu.AccountMenu;
 import com.techelevator.menu.FriendsMenu;
 import com.techelevator.menu.TransferMenu;
+import com.techelevator.model.Logger;
 import com.techelevator.model.LoginDTO;
 import com.techelevator.model.RegisterUserDTO;
 import com.techelevator.model.UserToken;
@@ -10,12 +11,12 @@ import com.techelevator.services.InputService;
 import com.techelevator.services.GraphicServices;
 import com.techelevator.services.LoginRegisterService;
 
+import java.io.File;
+
 public class App {
     private InputService inputService;
     private GraphicServices graphicServices;
     private LoginRegisterService loginRegisterService;
-
-
     private UserToken userToken;
     private LoginDTO user;
 
@@ -57,7 +58,7 @@ public class App {
         graphicServices.loginRegisterMenu();
         menuSelection = inputService.promptForMenuSelection();
         if (menuSelection < 0 || menuSelection > 2) {
-            System.out.println("Invalid input");
+            System.out.println("Invalid input.");
             return -1;
         }else {
             return menuSelection;

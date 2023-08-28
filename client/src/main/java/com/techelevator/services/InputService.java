@@ -36,7 +36,7 @@ public class InputService {
         try {
             selection = Integer.parseInt(scanner.nextLine());
         } catch (NumberFormatException e) {
-            System.out.println("Invalid input: Please enter a number");
+            System.out.println("Invalid input: Please enter a number.");
         }
         return selection;
     }
@@ -53,13 +53,13 @@ public class InputService {
 
     public int promptForAccountId() {
         int accountId = 0;
-        System.out.println("Please enter your accountId");
+        System.out.println("Please enter your Account ID:");
         while (true) {
             try {
                 accountId = Integer.parseInt(scanner.nextLine());
                 break;
             } catch (NumberFormatException e) {
-                System.out.println("Invalid input: Please enter a number");
+                System.out.println("Invalid input: Please enter a number.");
             }
         }
         return accountId;
@@ -80,7 +80,7 @@ public class InputService {
                 amount = new BigDecimal(depositAmount);
                 break;
             } catch (NumberFormatException e) {
-                System.out.println("Invalid input: please enter a valid deposit in digits");
+                System.out.println("Invalid input: Please enter a valid deposit in digits.");
             }
         }
         return amount;
@@ -95,7 +95,7 @@ public class InputService {
                 amount = new BigDecimal(depositAmount);
                 break;
             } catch (NumberFormatException e) {
-                System.out.println("Invalid input: please enter a valid deposit in digits");
+                System.out.println("Invalid input: please enter a valid deposit in digits.");
             }
         }
         return amount;
@@ -109,21 +109,21 @@ public class InputService {
                 transferAmount = new BigDecimal(scanner.nextLine());
                 break;
             } catch (NumberFormatException e) {
-                System.out.println("Invalid input: please enter a valid deposit in digits");
+                System.out.println("Invalid input: please enter a valid deposit in digits.");
             }
         }
         return transferAmount;
     }
 
     public int promptForTransferId() {
-        System.out.println("Please enter a transfer id: ");
+        System.out.println("Please enter a Transfer ID: ");
         int transferId = 0;
         while (true) {
             try {
                 transferId = Integer.parseInt(scanner.nextLine());
                 break;
             } catch (NumberFormatException e) {
-                System.out.println("Invalid input, please enter a number");
+                System.out.println("Invalid input, please enter a number.");
             }
         }
         return transferId;

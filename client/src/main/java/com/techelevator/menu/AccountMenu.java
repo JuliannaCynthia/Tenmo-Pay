@@ -86,7 +86,7 @@ public class AccountMenu {
                     account = accountsService.updateAccount(account);
                     graphicServices.displayAccount(account);
                 } else {
-                    System.out.println("Cannot withdraw more than account balance");
+                    System.out.println("Cannot withdraw more than account balance.");
                 }
 
             }

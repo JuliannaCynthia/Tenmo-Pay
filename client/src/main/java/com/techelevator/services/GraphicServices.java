@@ -209,4 +209,65 @@ public class GraphicServices {
         System.out.println("      #####                                   #####");
         System.out.println("      ########~*~*~*~*~*~*~*~*~*~*~*~*~*~*~########");
     }
+
+    public void friendRequest(boolean requestSent) {
+        if(requestSent){
+            System.out.println("                 ####--------------####");
+            System.out.println("                 #><----Request-----><#");
+            System.out.println("                 #><-----Sent!------><#");
+            System.out.println("                 ####--------------####");
+        } else {
+            System.out.println("                 X_X_X_X_X_X_X_X_X_X_X_X");
+            System.out.println("                 X_X Invalid Request X_X");
+            System.out.println("                 X_X    Try Again    X_X");
+            System.out.println("                 X_X_X_X_X_X_X_X_X_X_X_X");
+        }
+    }
+
+    public void friendApproval(boolean requestApproved) {
+        if(requestApproved){
+            System.out.println("                 ####--------------####");
+            System.out.println("                 #><----Request-----><#");
+            System.out.println("                 #><---Approved!----><#");
+            System.out.println("                 ####--------------####");
+        } else {
+            System.out.println("                 X_X_X_X_X_X_X_X_X_X_X_X");
+            System.out.println("                 X_X Oops! Something X_X");
+            System.out.println("                 X_X Has Gone Wrong. X_X");
+            System.out.println("                 X_X    Try Again!   X_X");
+            System.out.println("                 X_X_X_X_X_X_X_X_X_X_X_X");
+        }
+    }
+
+    public void friendDenial(boolean successful) {
+        if(successful){
+            System.out.println("                 ####--------------####");
+            System.out.println("                 #><----Request-----><#");
+            System.out.println("                 #><---Approved!----><#");
+            System.out.println("                 ####--------------####");
+        } else {
+            System.out.println("                 X_X_X_X_X_X_X_X_X_X_X_X");
+            System.out.println("                 X_X Oops! Something X_X");
+            System.out.println("                 X_X Has Gone Wrong. X_X");
+            System.out.println("                 X_X    Try Again!   X_X");
+            System.out.println("                 X_X_X_X_X_X_X_X_X_X_X_X");
+        }
+    }
+
+    public void friendRemoval(boolean successful) {
+        if(successful){
+            System.out.println("                 ####--------------####");
+            System.out.println("                 #><-----Friend-----><#");
+            System.out.println("                 #><----Removed.----><#");
+            System.out.println("                 ####--------------####");
+        } else {
+            System.out.println("                 X_X_X_X_X_X_X_X_X_X_X_X");
+            System.out.println("                 X_X Oops! Something X_X");
+            System.out.println("                 X_X Has Gone Wrong. X_X");
+            System.out.println("                 X_X    Try Again!   X_X");
+            System.out.println("                 X_X_X_X_X_X_X_X_X_X_X_X");
+        }
+    }
+
+
 }

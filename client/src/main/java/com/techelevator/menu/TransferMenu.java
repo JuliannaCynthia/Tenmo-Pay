@@ -45,7 +45,7 @@ public class TransferMenu {
 
             //create transfer request
             if (menuSelection == 2) {
-                System.out.println("Who would you like to request money from");
+                System.out.println("Who would you like to request money from?");
                 String friendUsername = inputService.promptForUsername();
 
                 BigDecimal transferAmount = inputService.promptForTransferAmount();

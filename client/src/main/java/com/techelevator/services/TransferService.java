@@ -1,6 +1,7 @@
 package com.techelevator.services;
 
 
+import com.techelevator.model.Logger;
 import com.techelevator.model.Transfer;
 import com.techelevator.model.TransferDTO;
 import com.techelevator.model.UserToken;
@@ -10,6 +11,7 @@ import org.springframework.web.client.RestClientResponseException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.io.File;
 import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -17,7 +19,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class TransferService {
-
+    private static File file = new File("Logs","log.txt");
+    private static Logger log = new Logger(file);
     private final static String TRANSFER_BASE_URL = "http://localhost:8080/transfer";
     private final RestTemplate restTemplate = new RestTemplate();
     private final UserToken userToken;
@@ -44,7 +47,7 @@ public class TransferService {
             transferDTO = restTemplate.postForObject(TRANSFER_BASE_URL, transferHttpEntity, TransferDTO.class);
 
         } catch (RestClientResponseException | ResourceAccessException e) {
-            //TODO: add a logger here. log(e.getMessage)
+            log.write(e.getMessage());
         }
         return transferDTO;
     }
@@ -56,7 +59,7 @@ public class TransferService {
             restTemplate.put(TRANSFER_BASE_URL, transferHttpEntity);
             isSuccessful = true;
         } catch (RestClientResponseException | ResourceAccessException e) {
-            //TODO: add a logger here. log(e.getMessage)
+            log.write(e.getMessage());
         }
         return isSuccessful;
     }
@@ -76,7 +79,7 @@ public class TransferService {
                 throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Friend '" + friendUsername + "' not found");
             }
         } catch (RestClientResponseException | ResourceAccessException e) {
-            //TODO: add a logger here. log(e.getMessage)
+            log.write(e.getMessage());
         } catch (ResponseStatusException e){
             System.out.println(e.getStatus().getReasonPhrase() + "\n" + e.getMessage() );
             transferHistory = new TransferDTO[1];
@@ -92,7 +95,7 @@ public class TransferService {
             transferInfo = restTemplate.postForObject(TRANSFER_BASE_URL + "/by_id", transferHttpEntity, Transfer.class);
 
         } catch (RestClientResponseException | ResourceAccessException e) {
-            //TODO: add a logger here. log(e.getMessage)
+            log.write(e.getMessage());
         }
         return transferInfo;
     }
@@ -106,7 +109,7 @@ public class TransferService {
                 throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No pending transfers found");
             }
         } catch (RestClientResponseException | ResourceAccessException e) {
-            //TODO: add a logger here. log(e.getMessage)
+            log.write(e.getMessage());
         } catch (ResponseStatusException e ){
             System.out.println(e.getStatus().getReasonPhrase() + "\n" + e.getMessage());
             pendingTransfers = new TransferDTO[1];

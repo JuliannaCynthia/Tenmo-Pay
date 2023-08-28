@@ -2,18 +2,22 @@ package com.techelevator.services;
 
 import com.techelevator.model.Account;
 import com.techelevator.model.AccountDTO;
+import com.techelevator.model.Logger;
 import com.techelevator.model.UserToken;
 import org.springframework.http.*;
 import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestClientResponseException;
 import org.springframework.web.client.RestTemplate;
 
+import java.io.File;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
 public class AccountsService {
 
+    private static File file = new File("Logs","log.txt");
+    private static Logger log = new Logger(file);
     public static String ACCOUNT_BASE_URL = "http://localhost:8080/account";
     private final RestTemplate restTemplate = new RestTemplate();
     private final UserToken userToken;
@@ -28,7 +32,7 @@ public class AccountsService {
                 restTemplate.exchange(ACCOUNT_BASE_URL + "/all", HttpMethod.GET, makeAuthEntity(), AccountDTO[].class );
             userAccounts = response.getBody();
         } catch (RestClientResponseException | ResourceAccessException e) {
-            //TODO: add a logger here. log(e.getMessage)
+            log.write(e.getMessage());
         }
         return Arrays.stream(userAccounts).collect(Collectors.toList());
     }
@@ -40,7 +44,7 @@ public class AccountsService {
                     restTemplate.exchange(ACCOUNT_BASE_URL + "/create", HttpMethod.POST, makeAuthEntity(), Account.class);
             newAccount = response.getBody();
         }catch (RestClientResponseException | ResourceAccessException e) {
-            //TODO: add a logger here. log(e.getMessage)
+            log.write(e.getMessage());
         }
         return newAccount;
     }
@@ -55,7 +59,7 @@ public class AccountsService {
             returnedAccount = restTemplate.postForObject(ACCOUNT_BASE_URL , accountHttpEntity, AccountDTO.class );
         } catch (RestClientResponseException | ResourceAccessException e) {
             System.out.println(e.getMessage());
-            //TODO: add a logger here. log(e.getMessage)
+            log.write(e.getMessage());
         }
         return returnedAccount;
     }
@@ -70,7 +74,7 @@ public class AccountsService {
             successful = true;
         }catch (RestClientResponseException | ResourceAccessException e) {
             System.out.println(e.getMessage());
-            //TODO: add a logger here. log(e.getMessage)
+            log.write(e.getMessage());
         }
         return successful;
     }
@@ -84,7 +88,7 @@ public class AccountsService {
             account = response.getBody();
         } catch (RestClientResponseException | ResourceAccessException e) {
             System.out.println(e.getMessage());
-            //TODO: add a logger here. log(e.getMessage)
+            log.write(e.getMessage());
         }
         return account;
     }
